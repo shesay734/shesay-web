@@ -21,10 +21,7 @@
       <div class="recharge">
         <strong>Top up</strong>
         <p class="muted">Choose a method to begin.</p>
-        <div class="payment-options">
-          <button class="payment-option" type="button" data-method="alipay"><strong>Alipay</strong><span>Top up your USD balance in CNY</span></button>
-          <button class="payment-option" type="button" data-method="usdt"><strong>USDT</strong><span>On-chain USDT top up</span></button>
-        </div>
+        <div id="paymentOptions" class="payment-options"></div>
         <div id="notice" class="notice" aria-live="polite"></div>
       </div>
     </section>
@@ -34,7 +31,14 @@
   <script>
     const $ = id => document.getElementById(id);
     const sb = SheSay.client;
+    const escapeHtml = value => { const node = document.createElement('div'); node.textContent = value ?? ''; return node.innerHTML; };
     function notice(message, kind = '') { $('notice').textContent = message; $('notice').className = `notice ${kind}`; }
+    function renderPaymentMethods(methods) {
+      $('paymentOptions').innerHTML = methods.map(method => {
+        const details = [method.network, method.address, method.note].filter(Boolean).join(' · ');
+        return `<button class="payment-option" type="button"><strong>${escapeHtml(method.display_name)}</strong><span>${escapeHtml(details || 'Payment instructions are not configured yet.')}</span></button>`;
+      }).join('');
+    }
     async function load() {
       const { data: { user } } = await sb.auth.getUser();
       $('loading').classList.add('hidden');
@@ -44,12 +48,13 @@
       const { data, error } = await sb.from('wallets').select('balance').eq('user_id', user.id).maybeSingle();
       $('balance').textContent = '$' + Number(data?.balance || 0).toFixed(2);
       if (error) notice('Could not load your balance. Please refresh and try again.', 'error');
+      const methods = await sb.from('payment_methods').select('method,display_name,network,address,note').order('sort_order');
+      if (methods.error) notice('Could not load payment instructions. Please refresh and try again.', 'error');
+      else renderPaymentMethods(methods.data || []);
     }
     $('refresh').onclick = load;
     $('logout').onclick = async () => { await sb.auth.signOut(); location.replace('auth.html#login'); };
-    document.querySelectorAll('[data-method]').forEach(button => button.onclick = () => {
-      notice(button.dataset.method === 'alipay' ? 'Alipay merchant collection is not configured, so no real charge can be started yet.' : 'The USDT receiving network and address are not configured, so no real transfer can be started yet.');
-    });
+
     load();
   </script>
 </body>
