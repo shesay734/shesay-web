@@ -90,6 +90,10 @@
         theme: 'light',
       });
     }
+    function resetCaptcha() {
+      captchaToken = '';
+      if (captchaWidget !== null && window.hcaptcha) hcaptcha.reset(captchaWidget);
+    }
     window.onHcaptchaLoaded = renderCaptcha;
 
     function render() {
@@ -112,8 +116,7 @@
       mode = nextMode;
       challengeId = null;
       verifiedSession = null;
-      captchaToken = '';
-      if (captchaWidget !== null && window.hcaptcha) hcaptcha.reset(captchaWidget);
+      resetCaptcha();
       history.replaceState(null, '', nextMode === 'register' ? '#register' : '#login');
       render();
     }
@@ -184,12 +187,19 @@
         } else {
           await verifyRegistration();
         }
-      } catch (error) { showNotice(error.message || 'Something went wrong. Please try again.', 'error'); }
+      } catch (error) {
+        resetCaptcha();
+        showNotice(error.message || 'Something went wrong. Please complete the verification again and retry.', 'error');
+      }
       finally { button.disabled = false; }
     };
     $('keepAccount').onclick = () => location.replace(returnTo);
     $('replaceAccount').onclick = async () => {
       if (!verifiedSession || !confirm('Delete the original account and all data to create a new account? This cannot be undone.')) return;
+      if (!captchaToken) {
+        showNotice('Complete the human verification again before creating the replacement account.', 'error');
+        return;
+      }
       const button = $('replaceAccount'); button.disabled = true;
       try {
         await SheSay.fusion('replaceExistingEmailAccount', {
@@ -198,10 +208,14 @@
         await sb.auth.signOut();
         const { error } = await sb.auth.signInWithPassword({
           email: $('email').value.trim(), password: $('password').value,
+          options: { captchaToken },
         });
         if (error) throw error;
         location.replace(returnTo);
-      } catch (error) { showNotice(error.message || 'Could not create the new account.', 'error'); }
+      } catch (error) {
+        resetCaptcha();
+        showNotice(error.message || 'Could not create the new account. Please complete the verification again and retry.', 'error');
+      }
       finally { button.disabled = false; }
     };
     render();
