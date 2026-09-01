@@ -48,7 +48,7 @@
       const { data, error } = await sb.from('wallets').select('balance').eq('user_id', user.id).maybeSingle();
       $('balance').textContent = '$' + Number(data?.balance || 0).toFixed(2);
       if (error) notice('Could not load your balance. Please refresh and try again.', 'error');
-      const methods = await sb.from('payment_methods').select('method,display_name,network,address,note').order('sort_order');
+      const methods = await sb.from('payment_methods').select('id,method,display_name,network,address,note').eq('method', 'usdt').order('sort_order').order('id');
       if (methods.error) notice('Could not load payment instructions. Please refresh and try again.', 'error');
       else renderPaymentMethods(methods.data || []);
     }
