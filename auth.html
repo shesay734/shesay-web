@@ -36,13 +36,15 @@
         </div>
         <input id="password" type="password" autocomplete="current-password" required minlength="6" maxlength="16" placeholder="6–16 characters, no spaces">
 
-      <div id="loginOtpFields" class="hidden">
+        <div id="loginOtpFields" class="hidden">
           <label for="loginCode">Verification code</label>
           <div class="code-row">
             <input id="loginCode" type="text" inputmode="numeric" autocomplete="one-time-code" maxlength="8" placeholder="Enter the code from your email">
             <button id="sendLoginCode" class="button ghost" type="button">Send code</button>
           </div>
         </div>
+
+        <div id="loginCaptcha" class="captcha-wrap"></div>
 
         <div id="verifyFields" class="hidden">
           <label for="code">Email verification code</label>
@@ -94,8 +96,9 @@
       if (password.length < 6 || password.length > 16 || /\s/.test(password)) throw new Error('Password must be 6–16 characters with no spaces.');
     }
     function renderCaptcha() {
-      if (mode !== 'register' || !window.hcaptcha || captchaWidget !== null) return;
-      captchaWidget = hcaptcha.render('captcha', {
+      const registering = mode === 'register';
+      if (!window.hcaptcha || captchaWidget !== null) return;
+      captchaWidget = hcaptcha.render(registering ? 'captcha' : 'loginCaptcha', {
         sitekey: 'e57677ec-021c-445c-8570-cc848e5ae820',
         callback: token => { captchaToken = token; },
         'expired-callback': () => { captchaToken = ''; },
@@ -116,13 +119,14 @@
       $('verifyFields').classList.toggle('hidden', !registering);
       $('loginOtpToggle').classList.toggle('hidden', registering);
       $('loginOtpFields').classList.toggle('hidden', registering || !loginOtpMode);
+      $('loginCaptcha').classList.toggle('hidden', registering);
       $('password').classList.toggle('hidden', !registering && loginOtpMode);
       $('password').required = registering || !loginOtpMode;
       $('password').autocomplete = registering ? 'new-password' : 'current-password';
       $('submit').textContent = registering ? 'Sign up' : 'Log in and open wallet';
       $('existingChoice').classList.add('hidden');
       showNotice();
-      if (registering) setTimeout(renderCaptcha, 0);
+      setTimeout(renderCaptcha, 0);
     }
     function setMode(nextMode) {
       mode = nextMode;
@@ -189,9 +193,10 @@
       const email = $('email').value.trim();
       const button = $('sendLoginCode');
       if (!/^\S+@\S+\.\S+$/.test(email)) { showNotice('Enter a valid email address.', 'error'); return; }
+      if (!captchaToken) { showNotice('Complete the human verification first.', 'error'); return; }
       button.disabled = true;
       try {
-        const { error } = await sb.auth.signInWithOtp({ email, options: { shouldCreateUser: false } });
+        const { error } = await sb.auth.signInWithOtp({ email, options: { shouldCreateUser: false, captchaToken } });
         if (error) throw error;
         loginOtpSent = true;
         showNotice('Verification code sent. Check your email.', 'success');
@@ -209,6 +214,7 @@
       showNotice('Processing securely…');
       try {
         if (mode === 'login') {
+          if (!captchaToken) throw new Error('Complete the human verification first.');
           if (loginOtpMode) {
             if (!loginOtpSent || !$('loginCode').value.trim()) throw new Error('Send and enter the verification code first.');
             const { error } = await sb.auth.verifyOtp({ email: $('email').value.trim(), token: $('loginCode').value.trim(), type: 'email' });
