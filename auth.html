@@ -37,7 +37,10 @@
         <input id="password" type="password" autocomplete="current-password" required minlength="6" maxlength="16" placeholder="6–16 characters, no spaces">
 
         <div id="loginOtpFields" class="hidden">
-          <label for="loginCode">Verification code</label>
+          <div class="field-heading">
+            <label for="loginCode">Verification code</label>
+            <button id="loginPasswordToggle" class="text-button" type="button">Log in with password</button>
+          </div>
           <div class="code-row">
             <input id="loginCode" type="text" inputmode="numeric" autocomplete="one-time-code" maxlength="8" placeholder="Enter the code from your email">
             <button id="sendLoginCode" class="button ghost" type="button">Send code</button>
@@ -120,7 +123,7 @@
       $('loginOtpToggle').classList.toggle('hidden', registering);
       $('loginOtpFields').classList.toggle('hidden', registering || !loginOtpMode);
       $('loginCaptcha').classList.toggle('hidden', registering);
-      $('passwordHeading').classList.toggle('hidden', registering);
+      $('passwordHeading').classList.toggle('hidden', registering || loginOtpMode);
       $('passwordLabel').classList.toggle('hidden', loginOtpMode);
       $('password').classList.toggle('hidden', !registering && loginOtpMode);
       $('password').required = registering || !loginOtpMode;
@@ -189,6 +192,11 @@
       loginOtpMode = !loginOtpMode;
       loginOtpSent = false;
       $('loginOtpToggle').textContent = loginOtpMode ? 'Log in with password' : 'Log in with verification code';
+      render();
+    };
+    $('loginPasswordToggle').onclick = () => {
+      loginOtpMode = false;
+      loginOtpSent = false;
       render();
     };
     $('sendLoginCode').onclick = async () => {
