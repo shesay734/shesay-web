@@ -135,7 +135,10 @@
       challengeId = null;
       verifiedSession = null;
       captchaToken = '';
-      if (captchaWidget !== null && window.hcaptcha) hcaptcha.reset(captchaWidget);
+      if (captchaWidget !== null && window.hcaptcha) {
+        hcaptcha.remove(captchaWidget);
+        captchaWidget = null;
+      }
       history.replaceState(null, '', nextMode === 'register' ? '#register' : '#login');
       render();
     }
