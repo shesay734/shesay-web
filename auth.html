@@ -119,7 +119,7 @@
       $('loginOtpToggle').classList.toggle('hidden', registering);
       $('loginOtpFields').classList.toggle('hidden', registering || !loginOtpMode);
       $('loginCaptcha').classList.toggle('hidden', registering);
-      $('passwordHeading').classList.toggle('hidden', registering);
+      $('passwordHeading').classList.remove('hidden');
       $('passwordLabel').textContent = loginOtpMode ? 'Verification code' : 'Password';
       $('passwordLabel').htmlFor = loginOtpMode ? 'loginCode' : 'password';
       $('password').classList.toggle('hidden', !registering && loginOtpMode);
