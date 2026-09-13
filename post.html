@@ -62,7 +62,7 @@
     function render(row) {
       shared = row;
       document.title = `${row.title || 'Post'} · SheSay`;
-      let html = `<p class="eyebrow">SHE SAY · SHARED POST</p><div class="meta">${escapeHtml(row.author_name || 'SheSay user')}</div><h1>${escapeHtml(row.title || 'Untitled post')}</h1>`;
+      let html = `<p class="eyebrow">SHE SAY · SHARED POST</p><div class="meta">${escapeHtml(row.author_name || 'SheSay user')}</div><h1>${escapeHtml(row.title || 'Untitled post')}</h1><div class="post-actions"><button class="button ghost" type="button" id="openInApp">Open in app</button></div>`;
       if (row.locked) {
         html += gateHtml(row.scope, row.price, row.group_code, row.id);
       } else {
@@ -79,6 +79,14 @@
         }
       }
       el.innerHTML = html;
+      document.getElementById('openInApp').onclick = () => {
+        const deepLink = `shesay://post?id=${encodeURIComponent(row.id)}`;
+        const started = Date.now();
+        location.href = deepLink;
+        setTimeout(() => {
+          if (document.visibilityState === 'visible' && Date.now() - started < 1800) location.href = 'index.html';
+        }, 1200);
+      };
       bindPurchaseButtons();
     }
     async function load() {

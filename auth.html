@@ -30,8 +30,19 @@
           <input id="nickname" type="text" autocomplete="nickname" minlength="2" maxlength="10" placeholder="2–10 characters">
         </div>
 
-        <label for="password">Password</label>
+        <div class="field-heading">
+          <label for="password">Password</label>
+          <button id="loginOtpToggle" class="text-button" type="button">Log in with verification code</button>
+        </div>
         <input id="password" type="password" autocomplete="current-password" required minlength="6" maxlength="16" placeholder="6–16 characters, no spaces">
+
+      <div id="loginOtpFields" class="hidden">
+          <label for="loginCode">Verification code</label>
+          <div class="code-row">
+            <input id="loginCode" type="text" inputmode="numeric" autocomplete="one-time-code" maxlength="8" placeholder="Enter the code from your email">
+            <button id="sendLoginCode" class="button ghost" type="button">Send code</button>
+          </div>
+        </div>
 
         <div id="verifyFields" class="hidden">
           <label for="code">Email verification code</label>
@@ -39,10 +50,10 @@
             <input id="code" type="text" inputmode="numeric" autocomplete="one-time-code" maxlength="8" placeholder="Enter the code from your email">
             <button id="sendCode" class="button ghost" type="button">Send code</button>
           </div>
+          <div id="captcha" class="captcha-wrap"></div>
           <p class="auth-note">The code confirms email ownership. If this email already has an account, you can keep it or permanently delete it before creating a new one.</p>
         </div>
 
-        <div id="captcha" class="captcha-wrap"></div>
         <button id="submit" class="button auth-submit" type="submit">Log in and open wallet</button>
       </form>
       <div id="notice" class="notice" aria-live="polite"></div>
@@ -65,6 +76,8 @@
       ? requestedNext
       : 'wallet.html';
     let mode = location.hash === '#register' ? 'register' : 'login';
+    let loginOtpMode = false;
+    let loginOtpSent = false;
     let challengeId = null;
     let captchaWidget = null;
     let captchaToken = '';
@@ -81,7 +94,7 @@
       if (password.length < 6 || password.length > 16 || /\s/.test(password)) throw new Error('Password must be 6–16 characters with no spaces.');
     }
     function renderCaptcha() {
-      if (!window.hcaptcha || captchaWidget !== null) return;
+      if (mode !== 'register' || !window.hcaptcha || captchaWidget !== null) return;
       captchaWidget = hcaptcha.render('captcha', {
         sitekey: 'e57677ec-021c-445c-8570-cc848e5ae820',
         callback: token => { captchaToken = token; },
@@ -101,11 +114,15 @@
         : 'Log in to view your USD wallet balance on the web.';
       $('nicknameField').classList.toggle('hidden', !registering);
       $('verifyFields').classList.toggle('hidden', !registering);
+      $('loginOtpToggle').classList.toggle('hidden', registering);
+      $('loginOtpFields').classList.toggle('hidden', registering || !loginOtpMode);
+      $('password').classList.toggle('hidden', !registering && loginOtpMode);
+      $('password').required = registering || !loginOtpMode;
       $('password').autocomplete = registering ? 'new-password' : 'current-password';
       $('submit').textContent = registering ? 'Sign up' : 'Log in and open wallet';
       $('existingChoice').classList.add('hidden');
       showNotice();
-      setTimeout(renderCaptcha, 0);
+      if (registering) setTimeout(renderCaptcha, 0);
     }
     function setMode(nextMode) {
       mode = nextMode;
@@ -162,6 +179,25 @@
     }
     $('loginTab').onclick = () => setMode('login');
     $('registerTab').onclick = () => setMode('register');
+    $('loginOtpToggle').onclick = () => {
+      loginOtpMode = !loginOtpMode;
+      loginOtpSent = false;
+      $('loginOtpToggle').textContent = loginOtpMode ? 'Log in with password' : 'Log in with verification code';
+      render();
+    };
+    $('sendLoginCode').onclick = async () => {
+      const email = $('email').value.trim();
+      const button = $('sendLoginCode');
+      if (!/^\S+@\S+\.\S+$/.test(email)) { showNotice('Enter a valid email address.', 'error'); return; }
+      button.disabled = true;
+      try {
+        const { error } = await sb.auth.signInWithOtp({ email, options: { shouldCreateUser: false } });
+        if (error) throw error;
+        loginOtpSent = true;
+        showNotice('Verification code sent. Check your email.', 'success');
+      } catch (error) { showNotice(error.message || 'Could not send verification code.', 'error'); }
+      finally { button.disabled = false; }
+    };
     $('sendCode').onclick = async () => {
       const button = $('sendCode'); button.disabled = true;
       try { await sendCode(); } catch (error) { showNotice(error.message || 'Could not send verification code.', 'error'); }
@@ -173,22 +209,21 @@
       showNotice('Processing securely…');
       try {
         if (mode === 'login') {
-          if (!captchaToken) throw new Error('Complete the human verification first.');
-          const { error } = await sb.auth.signInWithPassword({
-            email: $('email').value.trim(),
-            password: $('password').value,
-            options: { captchaToken },
-          });
-          if (error) throw error;
+          if (loginOtpMode) {
+            if (!loginOtpSent || !$('loginCode').value.trim()) throw new Error('Send and enter the verification code first.');
+            const { error } = await sb.auth.verifyOtp({ email: $('email').value.trim(), token: $('loginCode').value.trim(), type: 'email' });
+            if (error) throw error;
+          } else {
+            const { error } = await sb.auth.signInWithPassword({
+              email: $('email').value.trim(), password: $('password').value,
+            });
+            if (error) throw error;
+          }
           location.replace(returnTo);
         } else {
           await verifyRegistration();
         }
-      } catch (error) {
-        showNotice(error.message || 'Something went wrong. Please try again.', 'error');
-        captchaToken = '';
-        if (captchaWidget !== null && window.hcaptcha) hcaptcha.reset(captchaWidget);
-      }
+      } catch (error) { showNotice(error.message || 'Something went wrong. Please try again.', 'error'); }
       finally { button.disabled = false; }
     };
     $('keepAccount').onclick = () => location.replace(returnTo);
