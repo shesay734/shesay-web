@@ -37,7 +37,6 @@
         <input id="password" type="password" autocomplete="current-password" required minlength="6" maxlength="16" placeholder="6–16 characters, no spaces">
 
         <div id="loginOtpFields" class="hidden">
-          <label for="loginCode">Verification code</label>
           <div class="code-row">
             <input id="loginCode" type="text" inputmode="numeric" autocomplete="one-time-code" maxlength="8" placeholder="Enter the code from your email">
             <button id="sendLoginCode" class="button ghost" type="button">Send code</button>
@@ -121,7 +120,8 @@
       $('loginOtpFields').classList.toggle('hidden', registering || !loginOtpMode);
       $('loginCaptcha').classList.toggle('hidden', registering);
       $('passwordHeading').classList.toggle('hidden', registering);
-      $('passwordLabel').classList.toggle('hidden', loginOtpMode);
+      $('passwordLabel').textContent = loginOtpMode ? 'Verification code' : 'Password';
+      $('passwordLabel').htmlFor = loginOtpMode ? 'loginCode' : 'password';
       $('password').classList.toggle('hidden', !registering && loginOtpMode);
       $('password').required = registering || !loginOtpMode;
       $('password').autocomplete = registering ? 'new-password' : 'current-password';
