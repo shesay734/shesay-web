@@ -30,7 +30,7 @@
           <input id="nickname" type="text" autocomplete="nickname" minlength="2" maxlength="10" placeholder="2–10 characters">
         </div>
 
-        <div class="field-heading">
+        <div id="passwordHeading" class="field-heading">
           <label for="password">Password</label>
           <button id="loginOtpToggle" class="text-button" type="button">Log in with verification code</button>
         </div>
@@ -120,6 +120,7 @@
       $('loginOtpToggle').classList.toggle('hidden', registering);
       $('loginOtpFields').classList.toggle('hidden', registering || !loginOtpMode);
       $('loginCaptcha').classList.toggle('hidden', registering);
+      $('passwordHeading').classList.toggle('hidden', !registering && loginOtpMode);
       $('password').classList.toggle('hidden', !registering && loginOtpMode);
       $('password').required = registering || !loginOtpMode;
       $('password').autocomplete = registering ? 'new-password' : 'current-password';
