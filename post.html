@@ -16,14 +16,24 @@
     .gate{margin-top:24px;padding:20px;border:1px solid var(--line);border-radius:14px;background:#faf8fb;text-align:center}
     .gate strong,.gate span{display:block}.gate span{margin:6px 0 14px;color:var(--muted);font-size:14px}
     .post-actions{display:flex;justify-content:center;gap:8px;flex-wrap:wrap}
-  </style>
-</head>
-<body>
-  <main class="site-shell">
-    <article id="post" class="paper shared-post"><p class="eyebrow">SHE SAY · SHARED POST</p><div class="meta">Loading…</div></article>
-    <div id="notice" class="notice" aria-live="polite"></div>
-    <footer class="site-footer"><a href="index.html">Visit SheSay &gt;</a></footer>
-  </main>
+        .hidden{display:none}
+        .download-gate{margin-top:24px;padding:20px;border:1px solid var(--line);border-radius:14px;background:#faf8fb;text-align:center}
+        .download-gate strong,.download-gate span{display:block}.download-gate span{margin:6px 0 14px;color:var(--muted);font-size:14px}
+      </style>
+    </head>
+    <body>
+      <main class="site-shell">
+        <article id="post" class="paper shared-post"><p class="eyebrow">SHE SAY · SHARED POST</p><div class="meta">Loading…</div></article>
+        <div id="notice" class="notice" aria-live="polite"></div>
+        <div id="downloadGate" class="download-gate hidden">
+          <strong>您还未下载app</strong>
+          <span>下载 SheSay App 后即可打开此内容。</span>
+          <div class="post-actions">
+            <a class="button" href="https://play.google.com/store/apps/details?id=com.shesay_app" target="_blank" rel="noopener">下载</a>
+          </div>
+        </div>
+        <footer class="site-footer"><a href="index.html">Visit SheSay &gt;</a></footer>
+      </main>
   <script src="site.js"></script>
   <script>
     const id = new URLSearchParams(location.search).get('id');
@@ -54,9 +64,14 @@
       const fallbackTimer = setTimeout(() => {
         const stillVisible = document.visibilityState === 'visible';
         cancel();
-        if (stillVisible) location.assign(APP_HOME);
-      }, 1500);
+        if (stillVisible) showDownloadPrompt();
+      }, 1200);
       location.href = deepLink;
+    }
+    function showDownloadPrompt() {
+      const gate = document.getElementById('downloadGate');
+      if (gate) gate.classList.remove('hidden');
+      document.getElementById('openInApp').textContent = '您还未下载app';
     }
     let session = null;
     let shared = null;

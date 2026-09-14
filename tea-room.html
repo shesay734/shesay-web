@@ -19,25 +19,33 @@
     .label { margin-top: 20px; color: #777; font-size: 13px; }
     .announcement { margin-top: 7px; font-size: 14px; line-height: 1.65; white-space: pre-wrap; overflow-wrap: anywhere; }
     .open { display: flex; align-items: center; justify-content: center; width: 100%; height: 44px; margin-top: 24px; border-radius: 22px; background: #a765c5; color: #fff; text-decoration: none; font-size: 14px; font-weight: 600; }
-    .status { max-width: 520px; margin: 16px auto 0; color: #777; text-align: center; font-size: 13px; }
-    .hidden { display: none; }
-  </style>
-</head>
-<body>
-  <main class="page">
-    <section id="card" class="card hidden">
-      <div id="hero" class="hero"></div>
-      <div class="content">
-        <div class="room">
-          <img id="avatar" class="avatar hidden" alt="茶室头像">
-          <div id="avatarFallback" class="avatar avatar-fallback">茶</div>
-          <div id="name" class="name"></div>
-        </div>
-        <div class="label">公告</div>
-        <div id="announcement" class="announcement"></div>
-        <a id="openApp" class="open" href="#">打开APP加入茶室</a>
-      </div>
-    </section>
+        .download-gate { margin-top: 16px; padding: 18px; border: 1px solid #ebe4ed; border-radius: 16px; background: #faf8fb; text-align: center; }
+        .download-gate strong, .download-gate span { display: block; }
+        .download-gate span { margin: 6px 0 14px; color: #777; font-size: 13px; }
+        .status { max-width: 520px; margin: 16px auto 0; color: #777; text-align: center; font-size: 13px; }
+        .hidden { display: none; }
+      </style>
+    </head>
+    <body>
+      <main class="page">
+        <section id="card" class="card hidden">
+          <div id="hero" class="hero"></div>
+          <div class="content">
+            <div class="room">
+              <img id="avatar" class="avatar hidden" alt="茶室头像">
+              <div id="avatarFallback" class="avatar avatar-fallback">茶</div>
+              <div id="name" class="name"></div>
+            </div>
+            <div class="label">公告</div>
+            <div id="announcement" class="announcement"></div>
+            <a id="openApp" class="open" href="#">打开APP加入茶室</a>
+            <div id="downloadGate" class="download-gate hidden">
+              <strong>您还未下载app</strong>
+              <span>下载 SheSay App 后即可打开此内容。</span>
+              <a class="open" href="https://play.google.com/store/apps/details?id=com.shesay_app" target="_blank" rel="noopener">下载</a>
+            </div>
+          </div>
+        </section>
     <div id="status" class="status">正在加载茶室…</div>
   </main>
   <script>
@@ -69,12 +77,18 @@
       document.addEventListener('visibilitychange', onVisibility);
       window.addEventListener('pagehide', cancel);
       const fallbackTimer = setTimeout(() => {
-        const stillVisible = document.visibilityState === 'visible';
-        cancel();
-        if (stillVisible) location.assign(APP_HOME);
-      }, 1500);
-      location.href = deepLink;
-    }
+              const stillVisible = document.visibilityState === 'visible';
+              cancel();
+              if (stillVisible) showDownloadPrompt();
+            }, 1200);
+            location.href = deepLink;
+          }
+          function showDownloadPrompt() {
+            const gate = document.getElementById('downloadGate');
+            if (gate) gate.classList.remove('hidden');
+            const link = document.getElementById('openApp');
+            if (link) link.textContent = '您还未下载app';
+          }
     const safeUrl = value => {
       try {
         const url = new URL(value);

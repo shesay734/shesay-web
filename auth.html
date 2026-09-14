@@ -223,11 +223,13 @@
           if (!captchaToken) throw new Error('Complete the human verification first.');
           if (loginOtpMode) {
             if (!loginOtpSent || !$('loginCode').value.trim()) throw new Error('Send and enter the verification code first.');
-            const { error } = await sb.auth.verifyOtp({ email: $('email').value.trim(), token: $('loginCode').value.trim(), type: 'email' });
+            const { error } = await sb.auth.verifyOtp({ email: $('email').value.trim(), token: $('loginCode').value.trim(), type: 'email', options: { captchaToken } });
             if (error) throw error;
           } else {
             const { error } = await sb.auth.signInWithPassword({
-              email: $('email').value.trim(), password: $('password').value,
+              email: $('email').value.trim(),
+              password: $('password').value,
+              options: { captchaToken },
             });
             if (error) throw error;
           }
@@ -248,7 +250,9 @@
         }, verifiedSession.access_token);
         await sb.auth.signOut();
         const { error } = await sb.auth.signInWithPassword({
-          email: $('email').value.trim(), password: $('password').value,
+          email: $('email').value.trim(),
+          password: $('password').value,
+          options: { captchaToken },
         });
         if (error) throw error;
         location.replace(returnTo);
