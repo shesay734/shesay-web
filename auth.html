@@ -18,6 +18,7 @@
 
       <div class="tabs" role="tablist" aria-label="Account actions">
         <button id="loginTab" type="button" class="active" role="tab">Log in</button>
+
         <button id="registerTab" type="button" role="tab">Sign up</button>
       </div>
 
@@ -30,8 +31,14 @@
           <input id="nickname" type="text" autocomplete="nickname" minlength="2" maxlength="10" placeholder="2–10 characters">
         </div>
 
-        <label for="password">Password</label>
-        <input id="password" type="password" autocomplete="current-password" required minlength="6" maxlength="16" placeholder="6–16 characters, no spaces">
+        <div id="loginMethod" class="code-row">
+          <button id="passwordLoginTab" class="button ghost" type="button">Password</button>
+          <button id="otpLoginTab" class="button ghost" type="button">Email code</button>
+        </div>
+        <div id="passwordField">
+          <label for="password">Password</label>
+          <input id="password" type="password" autocomplete="current-password" required minlength="6" maxlength="16" placeholder="6–16 characters, no spaces">
+        </div>
 
         <div id="verifyFields" class="hidden">
           <label for="code">Email verification code</label>
@@ -39,10 +46,10 @@
             <input id="code" type="text" inputmode="numeric" autocomplete="one-time-code" maxlength="8" placeholder="Enter the code from your email">
             <button id="sendCode" class="button ghost" type="button">Send code</button>
           </div>
-          <p class="auth-note">The code confirms email ownership. If this email already has an account, you can keep it or permanently delete it before creating a new one.</p>
+          <p id="registrationNote" class="auth-note">The code confirms email ownership. If this email already has an account, you can keep it or permanently delete it before creating a new one.</p>
         </div>
 
-        <div id="captcha" class="captcha-wrap"></div>
+        <div id="captcha" class="captcha-wrap" aria-label="Human verification"></div>
 
         <button id="submit" class="button auth-submit" type="submit">Log in and open wallet</button>
       </form>
@@ -65,7 +72,11 @@
     const returnTo = requestedNext && requestedNext.startsWith('/') && !requestedNext.startsWith('//')
       ? requestedNext
       : 'wallet.html';
-    let mode = location.hash === '#register' ? 'register' : 'login';
+    let mode = location.hash === '#register'
+      ? 'register'
+      : location.hash === '#code'
+      ? 'otp'
+      : 'login';
     let challengeId = null;
     let captchaWidget = null;
     let captchaToken = '';
@@ -98,16 +109,33 @@
 
     function render() {
       const registering = mode === 'register';
+      const codeLogin = mode === 'otp';
       $('loginTab').classList.toggle('active', !registering);
+      $('otpLoginTab').classList.toggle('active', codeLogin);
+      $('passwordLoginTab').classList.toggle('active', mode === 'login');
+      $('loginMethod').classList.toggle('hidden', registering);
+      $('registrationNote').classList.toggle('hidden', !registering);
       $('registerTab').classList.toggle('active', registering);
-      $('title').textContent = registering ? 'Create your account' : 'Welcome back';
+      $('title').textContent = registering
+        ? 'Create your account'
+        : codeLogin
+        ? 'Log in with email code'
+        : 'Welcome back';
       $('subtitle').textContent = registering
         ? 'Create a SheSay account with your email.'
+        : codeLogin
+        ? 'Use a verification code sent to your email.'
         : 'Log in to view your USD wallet balance on the web.';
       $('nicknameField').classList.toggle('hidden', !registering);
-      $('verifyFields').classList.toggle('hidden', !registering);
+      $('passwordField').classList.toggle('hidden', codeLogin);
+      $('password').required = !codeLogin;
+      $('verifyFields').classList.toggle('hidden', !registering && !codeLogin);
       $('password').autocomplete = registering ? 'new-password' : 'current-password';
-      $('submit').textContent = registering ? 'Sign up' : 'Log in and open wallet';
+      $('submit').textContent = registering
+        ? 'Sign up'
+        : codeLogin
+        ? 'Log in with code'
+        : 'Log in and open wallet';
       $('existingChoice').classList.add('hidden');
       showNotice();
       setTimeout(renderCaptcha, 0);
@@ -117,7 +145,11 @@
       challengeId = null;
       verifiedSession = null;
       resetCaptcha();
-      history.replaceState(null, '', nextMode === 'register' ? '#register' : '#login');
+      history.replaceState(
+        null,
+        '',
+        nextMode === 'register' ? '#register' : nextMode === 'otp' ? '#code' : '#login',
+      );
       render();
     }
     async function setProfile() {
@@ -156,15 +188,27 @@
     async function sendCode() {
       const email = $('email').value.trim();
       if (!/^\S+@\S+\.\S+$/.test(email)) throw new Error('Enter a valid email address.');
-      registrationValuesValid();
+      if (mode === 'register') registrationValuesValid();
       if (!captchaToken) throw new Error('Complete the human verification first.');
-      const started = await SheSay.fusion('startEmailRegistration', { email });
+      const started = mode === 'register'
+        ? await SheSay.fusion('startEmailRegistration', { email })
+        : null;
       const { error } = await sb.auth.signInWithOtp({ email, options: { captchaToken } });
       if (error) throw error;
-      challengeId = started.challengeId;
+      challengeId = started?.challengeId ?? null;
       showNotice('Verification code sent. Check your email.', 'success');
     }
+    async function verifyOtpLogin() {
+      const email = $('email').value.trim();
+      const code = $('code').value.trim();
+      if (!code) throw new Error('Enter the email verification code.');
+      const { error } = await sb.auth.verifyOtp({ email, token: code, type: 'email' });
+      if (error) throw error;
+      location.replace(returnTo);
+    }
     $('loginTab').onclick = () => setMode('login');
+    $('passwordLoginTab').onclick = () => setMode('login');
+    $('otpLoginTab').onclick = () => setMode('otp');
     $('registerTab').onclick = () => setMode('register');
     $('sendCode').onclick = async () => {
       const button = $('sendCode'); button.disabled = true;
@@ -184,6 +228,8 @@
           });
           if (error) throw error;
           location.replace(returnTo);
+        } else if (mode === 'otp') {
+          await verifyOtpLogin();
         } else {
           await verifyRegistration();
         }

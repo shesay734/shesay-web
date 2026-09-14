@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="color-scheme" content="light">
+  <title>她说 · 茶室</title>
+  <style>
+    *{box-sizing:border-box}body{margin:0;background:#fff;color:#111;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif}.page{min-height:100vh;padding:28px 16px 40px}.card{max-width:520px;margin:0 auto;border:1px solid #e5e5e5;border-radius:18px;overflow:hidden;background:#fff}.hero{height:220px;background:#f1f1f1 center/cover no-repeat}.content{padding:18px}.room{display:flex;align-items:center;gap:12px}.avatar{width:58px;height:58px;border-radius:50%;object-fit:cover;background:#eee}.avatar-fallback{display:flex;align-items:center;justify-content:center;font-size:24px}.name{font-size:21px;font-weight:700}.label{margin-top:20px;font-size:13px;color:#777}.announcement{margin-top:7px;font-size:14px;line-height:1.65;white-space:pre-wrap}.open{display:block;width:100%;height:44px;margin-top:24px;border:0;border-radius:22px;background:#111;color:#fff;text-align:center;line-height:44px;text-decoration:none;font-size:14px}.status{max-width:520px;margin:16px auto 0;text-align:center;color:#777;font-size:13px}.hidden{display:none}
+  </style>
+</head>
+<body>
+  <main class="page">
+    <section id="card" class="card hidden">
+      <div id="hero" class="hero"></div>
+      <div class="content">
+        <div class="room">
+          <img id="avatar" class="avatar hidden" alt="茶室头像">
+          <div id="avatarFallback" class="avatar avatar-fallback">茶</div>
+          <div id="name" class="name"></div>
+        </div>
+        <div class="label">公告</div>
+        <div id="announcement" class="announcement"></div>
+        <a id="openApp" class="open" href="#">打开APP加入茶室</a>
+      </div>
+    </section>
+    <div id="status" class="status">正在加载茶室…</div>
+  </main>
+  <script src="open-app.js"></script>
+  <script>
+    const endpoint='https://suxprwbmoakcbopjuosa.supabase.co/rest/v1/rpc/get_tea_room_share_card';
+    const apiKey='sb_publishable_JsggCmnvB1Q50l5z2W11Uw_AfKLxCx7';
+    const params=new URLSearchParams(location.search);
+    const id=(params.get('id')||'').trim();
+    const status=document.getElementById('status');
+    const card=document.getElementById('card');
+    const openApp=document.getElementById('openApp');
+    const safeUrl=value=>{try{const u=new URL(value);return u.protocol==='https:'?u.href:''}catch(_){return''}};
+    if(!id){status.textContent='茶室链接无效';}
+    else{
+      openApp.href='shesay://tea-room?id='+encodeURIComponent(id);
+      fetch(endpoint,{method:'POST',headers:{'Content-Type':'application/json','apikey':apiKey},body:JSON.stringify({target_room_id:id})})
+        .then(r=>{if(!r.ok)throw new Error();return r.json()})
+        .then(data=>{
+          const room=Array.isArray(data)?data[0]:data;
+          if(!room)throw new Error();
+          document.getElementById('name').textContent=room.name||'茶室';
+          document.getElementById('announcement').textContent=room.announcement||'暂无公告';
+          const background=safeUrl(room.background_image_url||'');
+          if(background)document.getElementById('hero').style.backgroundImage=`url("${background.replaceAll('"','%22')}")`;
+          const avatar=safeUrl(room.avatar_url||'');
+          if(avatar){const img=document.getElementById('avatar');img.src=avatar;img.classList.remove('hidden');document.getElementById('avatarFallback').classList.add('hidden');}
+          card.classList.remove('hidden');status.classList.add('hidden');
+        })
+        .catch(()=>{status.textContent='茶室不存在或暂时无法加载';});
+    }
+  </script>
+</body>
+</html>
