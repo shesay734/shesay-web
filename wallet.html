@@ -22,6 +22,15 @@
         <strong>Top up</strong>
         <p class="muted">Choose a method to begin.</p>
         <div id="paymentOptions" class="payment-options"></div>
+        <div id="rechargeForm" class="recharge-form hidden">
+          <label for="rechargeAmount">充值金额 (USD)</label>
+          <input id="rechargeAmount" type="number" min="1" step="0.01" inputmode="decimal" placeholder="1.00">
+          <label for="rechargePaid">实付金额 (USDT)</label>
+          <input id="rechargePaid" type="number" min="1" step="0.01" inputmode="decimal" placeholder="1.00">
+          <label for="rechargeAddress">付款地址 (USDT)</label>
+          <input id="rechargeAddress" type="text" placeholder="你的 USDT 收款地址">
+          <button id="rechargeSubmit" class="button" type="button">提交充值申请</button>
+        </div>
         <div id="notice" class="notice" aria-live="polite"></div>
       </div>
     </section>
@@ -32,6 +41,45 @@
     const $ = id => document.getElementById(id);
     const sb = SheSay.client;
     function notice(message, kind = '') { $('notice').textContent = message; $('notice').className = `notice ${kind}`; }
+    let _selectedMethod = null;
+    function openRechargeForm(method) {
+      _selectedMethod = method;
+      $('rechargeForm').classList.remove('hidden');
+      $('rechargeSubmit').disabled = false;
+      $('rechargeAmount').value = '';
+      $('rechargePaid').value = '';
+      $('rechargeAddress').value = '';
+      notice('选择 USDT 渠道。请将你的充值金额与付款地址填入后提交申请。');
+    }
+    async function submitRecharge() {
+      const amount = Number($('rechargeAmount').value);
+      const paid = Number($('rechargePaid').value);
+      const address = $('rechargeAddress').value.trim();
+      if (!_selectedMethod || !Number.isFinite(amount) || amount < 1 || !Number.isFinite(paid) || paid < amount) {
+        notice('请填写有效的充值金额（≥$1）与实付金额（≥充值金额）。', 'error');
+        return;
+      }
+      if (address.length < 12) {
+        notice('请填写有效的 USDT 付款地址（至少 12 位）。', 'error');
+        return;
+      }
+      $('rechargeSubmit').disabled = true;
+      notice('正在提交充值申请…');
+      try {
+        const { data, error } = await sb.rpc('create_usdt_recharge_request', {
+          requested_amount: amount,
+          requested_paid_amount: paid,
+          requested_payer_crypto_address: address,
+          requested_payment_method_id: _selectedMethod.id,
+        });
+        if (error) throw error;
+        notice(`充值订单已提交，订单号 ${data}。请等待管理员确认后到账（处理中）。`, 'success');
+      } catch (error) {
+        notice(error?.message || '充值申请提交失败，请稍后重试。', 'error');
+      } finally {
+        $('rechargeSubmit').disabled = false;
+      }
+    }
     async function load() {
       const { data: { user } } = await sb.auth.getUser();
       $('loading').classList.add('hidden');
@@ -73,22 +121,14 @@
           detail.textContent = method.note || 'View receiving details';
 
           button.append(title, detail);
-          button.onclick = () => {
-            const parts = [];
-            if (method.network) parts.push(`Network: ${method.network}`);
-            if (method.address) parts.push(`Address: ${method.address}`);
-            if (method.note) parts.push(method.note);
-            notice(
-              parts.join(' · ') || 'Payment details are unavailable.',
-              parts.length ? 'success' : 'error',
-            );
-          };
+          button.onclick = () => openRechargeForm(method);
           options.appendChild(button);
         }
       }
     }
     $('refresh').onclick = load;
     $('logout').onclick = async () => { await sb.auth.signOut(); location.replace('auth.html#login'); };
+    $('rechargeSubmit').onclick = submitRecharge;
     load();
   </script>
 </body>

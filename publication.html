@@ -27,6 +27,34 @@
     const id = new URLSearchParams(location.search).get('id');
     const el = document.getElementById('publication');
     const sb = SheSay.client;
+    const APP_HOME = 'https://xn--1uss88i.com/';
+    let openAppPending = false;
+    function launchApp(deepLink) {
+      if (!deepLink || openAppPending) return;
+      openAppPending = true;
+      if (/Android/i.test(navigator.userAgent)) {
+        location.href = deepLink.replace(/^shesay:\/\//, 'intent://') +
+          '#Intent;scheme=shesay;action=android.intent.action.VIEW;category=android.intent.category.BROWSABLE;S.browser_fallback_url=' +
+          encodeURIComponent(APP_HOME) + ';end';
+        setTimeout(() => { openAppPending = false; }, 250);
+        return;
+      }
+      const cancel = () => {
+        clearTimeout(fallbackTimer);
+        document.removeEventListener('visibilitychange', onVisibility);
+        window.removeEventListener('pagehide', cancel);
+        openAppPending = false;
+      };
+      const onVisibility = () => { if (document.hidden) cancel(); };
+      document.addEventListener('visibilitychange', onVisibility);
+      window.addEventListener('pagehide', cancel);
+      const fallbackTimer = setTimeout(() => {
+        const stillVisible = document.visibilityState === 'visible';
+        cancel();
+        if (stillVisible) location.assign(APP_HOME);
+      }, 1500);
+      location.href = deepLink;
+    }
     const escapeHtml = value => { const node = document.createElement('div'); node.textContent = value ?? ''; return node.innerHTML; };
     function render(row) {
       document.title = `${row.title || 'Publication'} · SheSay`;
@@ -37,6 +65,8 @@
       const tagText = tags.length ? `<p class="publication-tags">${escapeHtml(tags.join(' · '))}</p>` : '';
       const appLink = `shesay://publication?id=${encodeURIComponent(row.id)}`;
       el.innerHTML = `<p class="eyebrow">SHE SAY · SHARED PUBLICATION</p><div class="meta">${escapeHtml(row.author_name || 'SheSay user')}</div><h1>${escapeHtml(row.title || 'Untitled publication')}</h1>${cover}<section class="synopsis">${escapeHtml(row.synopsis || '')}</section>${tagText}<a class="button open-app" href="${appLink}">Open in App</a>`;
+      const appLinkEl = el.querySelector('.open-app');
+      appLinkEl.onclick = event => { event.preventDefault(); launchApp(appLinkEl.href); };
     }
     async function load() {
       if (!id) { el.innerHTML = '<p class="publication-error">This share link is invalid.</p>'; return; }

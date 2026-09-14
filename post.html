@@ -30,6 +30,34 @@
     const el = document.getElementById('post');
     const notice = document.getElementById('notice');
     const sb = SheSay.client;
+    const APP_HOME = 'https://xn--1uss88i.com/';
+    let openAppPending = false;
+    function launchApp(deepLink) {
+      if (!deepLink || openAppPending) return;
+      openAppPending = true;
+      if (/Android/i.test(navigator.userAgent)) {
+        location.href = deepLink.replace(/^shesay:\/\//, 'intent://') +
+          '#Intent;scheme=shesay;action=android.intent.action.VIEW;category=android.intent.category.BROWSABLE;S.browser_fallback_url=' +
+          encodeURIComponent(APP_HOME) + ';end';
+        setTimeout(() => { openAppPending = false; }, 250);
+        return;
+      }
+      const cancel = () => {
+        clearTimeout(fallbackTimer);
+        document.removeEventListener('visibilitychange', onVisibility);
+        window.removeEventListener('pagehide', cancel);
+        openAppPending = false;
+      };
+      const onVisibility = () => { if (document.hidden) cancel(); };
+      document.addEventListener('visibilitychange', onVisibility);
+      window.addEventListener('pagehide', cancel);
+      const fallbackTimer = setTimeout(() => {
+        const stillVisible = document.visibilityState === 'visible';
+        cancel();
+        if (stillVisible) location.assign(APP_HOME);
+      }, 1500);
+      location.href = deepLink;
+    }
     let session = null;
     let shared = null;
     const escapeHtml = value => { const node = document.createElement('div'); node.textContent = value ?? ''; return node.innerHTML; };
@@ -79,14 +107,7 @@
         }
       }
       el.innerHTML = html;
-      document.getElementById('openInApp').onclick = () => {
-        const deepLink = `shesay://post?id=${encodeURIComponent(row.id)}`;
-        const started = Date.now();
-        location.href = deepLink;
-        setTimeout(() => {
-          if (document.visibilityState === 'visible' && Date.now() - started < 1800) location.href = 'index.html';
-        }, 1200);
-      };
+      document.getElementById('openInApp').onclick = () => launchApp(`shesay://post?id=${encodeURIComponent(row.id)}`);
       bindPurchaseButtons();
     }
     async function load() {
