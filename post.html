@@ -76,13 +76,15 @@
     let session = null;
     let shared = null;
     const escapeHtml = value => { const node = document.createElement('div'); node.textContent = value ?? ''; return node.innerHTML; };
-    const money = value => Number(value || 0).toFixed(2);
+    // 需求六：1 美元 = 10 S币。
+    const S_COIN_RATE = 10;
+    const money = value => (Number(value || 0) * S_COIN_RATE).toFixed(2) + ' S币';
     const nextUrl = () => `auth.html?next=${encodeURIComponent(location.pathname + location.search)}#login`;
     function showNotice(message = '', kind = '') { notice.textContent = message; notice.className = `notice ${kind}`; }
     function gateHtml(scope, price, groupCode, contentId) {
       if (!session) return `<div class="gate"><strong>Log in required</strong><span>Log in to verify your purchase and view this paid content.</span><div class="post-actions"><a class="button" href="${nextUrl()}">Log in</a></div></div>`;
       const label = scope === 'publication' ? 'Subscribe to publication' : scope === 'group' ? `Subscribe to group ${escapeHtml(groupCode || '')}` : scope === 'update' ? 'Purchase update' : 'Purchase post';
-      return `<div class="gate"><strong>${label}</strong><span>Price: $${money(price)}</span><div class="post-actions"><button class="button" type="button" data-purchase data-scope="${escapeHtml(scope)}" data-content-id="${escapeHtml(contentId)}" data-group-code="${escapeHtml(groupCode || '')}">${label} · $${money(price)}</button></div></div>`;
+      return `<div class="gate"><strong>${label}</strong><span>Price: ${money(price)}</span><div class="post-actions"><button class="button" type="button" data-purchase data-scope="${escapeHtml(scope)}" data-content-id="${escapeHtml(contentId)}" data-group-code="${escapeHtml(groupCode || '')}">${label} · ${money(price)}</button></div></div>`;
     }
     function bindPurchaseButtons() {
       document.querySelectorAll('[data-purchase]').forEach(button => button.onclick = async () => {
