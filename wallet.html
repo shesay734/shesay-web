@@ -22,6 +22,16 @@
         <strong>Top up</strong>
         <p class="muted">Choose a method to begin.</p>
         <div id="paymentOptions" class="payment-options"></div>
+        <div class="gift-card">
+          <button id="giftCardToggle" class="button ghost" type="button" aria-expanded="false" aria-controls="giftCardPanel">Redeem a gift card</button>
+          <div id="giftCardPanel" class="gift-card-panel hidden">
+            <label for="giftCardCode">Gift card code</label>
+            <div class="code-row">
+              <input id="giftCardCode" type="text" autocomplete="off" autocapitalize="characters" spellcheck="false" maxlength="64" placeholder="Enter your gift card code">
+              <button id="giftCardRedeem" class="button" type="button">Redeem</button>
+            </div>
+          </div>
+        </div>
         <div id="notice" class="notice" aria-live="polite"></div>
       </div>
     </section>
@@ -39,21 +49,68 @@
         return `<button class="payment-option" type="button"><strong>${escapeHtml(method.display_name)}</strong><span>${escapeHtml(details || 'Payment instructions are not configured yet.')}</span></button>`;
       }).join('');
     }
+    async function currentUser() {
+      const { data } = await sb.auth.getUser();
+      return data.user;
+    }
+    async function refreshBalance(user) {
+      const account = user || await currentUser();
+      if (!account) return null;
+      const { data, error } = await sb.from('wallets').select('balance').eq('user_id', account.id).maybeSingle();
+      $('balance').textContent = '$' + Number(data?.balance || 0).toFixed(2);
+      return error;
+    }
+    function setGiftCardPanel(open) {
+      $('giftCardPanel').classList.toggle('hidden', !open);
+      $('giftCardToggle').setAttribute('aria-expanded', String(open));
+      if (open) $('giftCardCode').focus();
+    }
+    function giftCardMessage(error) {
+      const message = String(error?.message || error?.details || '');
+      if (/not found/i.test(message)) return 'That gift card code was not found. Check the code and try again.';
+      if (/already been used/i.test(message)) return 'That gift card has already been used.';
+      if (/sign in is required/i.test(message)) return 'Please log in again and retry.';
+      if (/code is required/i.test(message)) return 'Enter your gift card code first.';
+      return 'Could not redeem the gift card. Please try again.';
+    }
+    async function redeemGiftCard() {
+      const code = $('giftCardCode').value.trim();
+      if (!code) { notice('Enter your gift card code first.', 'error'); return; }
+      const button = $('giftCardRedeem');
+      button.disabled = true;
+      notice('Redeeming your gift card…');
+      try {
+        const { data, error } = await sb.rpc('redeem_gift_card', { target_code: code });
+        if (error) throw error;
+        const credited = Number(data || 0);
+        $('giftCardCode').value = '';
+        notice(`Gift card redeemed. $${credited.toFixed(2)} was added to your balance.`, 'success');
+        await refreshBalance();
+      } catch (error) {
+        notice(giftCardMessage(error), 'error');
+      } finally {
+        button.disabled = false;
+      }
+    }
     async function load() {
       const { data: { user } } = await sb.auth.getUser();
       $('loading').classList.add('hidden');
       if (!user) { $('login').classList.remove('hidden'); return; }
       $('wallet').classList.remove('hidden');
       $('name').textContent = user.user_metadata?.nickname || user.email || 'SheSay user';
-      const { data, error } = await sb.from('wallets').select('balance').eq('user_id', user.id).maybeSingle();
-      $('balance').textContent = '$' + Number(data?.balance || 0).toFixed(2);
-      if (error) notice('Could not load your balance. Please refresh and try again.', 'error');
+      const balanceError = await refreshBalance(user);
+      if (balanceError) notice('Could not load your balance. Please refresh and try again.', 'error');
       const methods = await sb.from('payment_methods').select('id,method,display_name,network,address,note').eq('method', 'usdt').order('sort_order').order('id');
       if (methods.error) notice('Could not load payment instructions. Please refresh and try again.', 'error');
       else renderPaymentMethods(methods.data || []);
     }
     $('refresh').onclick = load;
     $('logout').onclick = async () => { await sb.auth.signOut(); location.replace('auth.html#login'); };
+    $('giftCardToggle').onclick = () => setGiftCardPanel($('giftCardPanel').classList.contains('hidden'));
+    $('giftCardRedeem').onclick = redeemGiftCard;
+    $('giftCardCode').addEventListener('keydown', event => {
+      if (event.key === 'Enter') { event.preventDefault(); redeemGiftCard(); }
+    });
 
     load();
   </script>

@@ -1,0 +1,14 @@
+
+# Local secrets and generated files
+.env
+.env.*
+!.env.example
+!.env.*.example
+*.jks
+*.keystore
+*.p12
+*.pfx
+__pycache__/
+*.pyc
+node_modules/
+*.log
