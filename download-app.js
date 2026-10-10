@@ -34,7 +34,7 @@
     } else if (apple) {
       recommendation.innerHTML = 'We detected <strong>Apple hardware</strong>. The iOS build will be distributed through TestFlight or the App Store once Apple signing is configured.';
     } else {
-      recommendation.innerHTML = 'Choose an Android ABI below, or open the release page to see the builds available for your device.';
+      recommendation.innerHTML = 'Choose an Android ABI below to download the build made for your device.';
     }
   }
 })();
