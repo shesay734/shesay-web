@@ -7,7 +7,7 @@
   <title>Log in or sign up · SheSay</title>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="https://js.hcaptcha.com/1/api.js?onload=onHcaptchaLoaded&render=explicit" async defer></script>
-  <link rel="stylesheet" href="site.css">
+  <link rel="stylesheet" href="site.css?v=auth-switch-1">
 </head>
 <body>
   <main class="auth-stage">
@@ -31,9 +31,9 @@
           <input id="nickname" type="text" autocomplete="nickname" minlength="2" maxlength="10" placeholder="2–10 characters">
         </div>
 
-        <div id="loginMethod" class="code-row">
-          <button id="passwordLoginTab" class="button ghost" type="button">Password</button>
-          <button id="otpLoginTab" class="button ghost" type="button">Email code</button>
+        <div id="loginMethod" class="auth-method-switch" role="group" aria-label="Login method">
+          <button id="passwordLoginTab" class="button ghost" type="button" aria-pressed="true">Password</button>
+          <button id="otpLoginTab" class="button ghost" type="button" aria-pressed="false">Email code</button>
         </div>
         <div id="passwordField">
           <label for="password">Password</label>
@@ -82,6 +82,10 @@
     let captchaToken = '';
     let verifiedSession = null;
 
+    function setPressed(id, pressed) {
+      const button = $(id);
+      if (button && typeof button.setAttribute === 'function') button.setAttribute('aria-pressed', String(pressed));
+    }
     function showNotice(message = '', kind = '') {
       $('notice').textContent = message;
       $('notice').className = `notice ${kind}`;
@@ -113,6 +117,8 @@
       $('loginTab').classList.toggle('active', !registering);
       $('otpLoginTab').classList.toggle('active', codeLogin);
       $('passwordLoginTab').classList.toggle('active', mode === 'login');
+      setPressed('otpLoginTab', codeLogin);
+      setPressed('passwordLoginTab', mode === 'login');
       $('loginMethod').classList.toggle('hidden', registering);
       $('registrationNote').classList.toggle('hidden', !registering);
       $('registerTab').classList.toggle('active', registering);
