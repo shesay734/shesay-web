@@ -1,5 +1,10 @@
 (() => {
-  const releaseUrl = 'https://github.com/shesay734/SheApp/releases';
+  const releaseUrl = 'https://github.com/shesay734/SheApp/releases/tag/debug-latest';
+  const apkUrls = {
+    'arm64-v8a': 'https://github.com/shesay734/SheApp/releases/download/debug-latest/SheSay-android-arm64-v8a-debug.apk',
+    'armeabi-v7a': 'https://github.com/shesay734/SheApp/releases/download/debug-latest/SheSay-android-armeabi-v7a-debug.apk',
+    x86_64: 'https://github.com/shesay734/SheApp/releases/download/debug-latest/SheSay-android-x86_64-debug.apk'
+  };
   const recommendation = document.querySelector('[data-download-recommendation]');
   const options = [...document.querySelectorAll('[data-abi]')];
   const platform = (navigator.userAgentData?.platform || navigator.platform || navigator.userAgent || '').toLowerCase();
@@ -13,7 +18,13 @@
     ? 'armeabi-v7a'
     : 'arm64-v8a';
 
-  document.querySelectorAll('[data-release-link]').forEach(link => { link.href = releaseUrl; });
+  document.querySelectorAll('[data-release-link]').forEach(link => {
+    link.href = apkUrls[link.dataset.abi] || releaseUrl;
+    link.target = '_blank';
+    link.rel = 'noreferrer';
+    const label = link.querySelector('em');
+    if (label && apkUrls[link.dataset.abi]) label.textContent = 'Download APK ↗';
+  });
   options.forEach(option => option.classList.toggle('is-recommended', option.dataset.abi === abi));
 
   if (recommendation) {
