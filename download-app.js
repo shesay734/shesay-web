@@ -1,9 +1,9 @@
 (() => {
-  const releaseUrl = 'https://github.com/shesay734/SheApp/releases/tag/debug-latest';
+  const releaseUrl = 'https://github.com/shesay734/SheApp/releases/tag/v0.0.6';
   const apkUrls = {
     'arm64-v8a': 'https://github.com/shesay734/SheApp/releases/download/v0.0.6/SheSay-android-arm64-v8a-release.apk',
-    'armeabi-v7a': 'https://github.com/shesay734/SheApp/releases/download/debug-latest/SheSay-android-armeabi-v7a-debug.apk',
-    x86_64: 'https://github.com/shesay734/SheApp/releases/download/debug-latest/SheSay-android-x86_64-debug.apk'
+    'armeabi-v7a': 'https://github.com/shesay734/SheApp/releases/download/v0.0.6/SheSay-android-armeabi-v7a-release.apk',
+    x86_64: 'https://github.com/shesay734/SheApp/releases/download/v0.0.6/SheSay-android-x86_64-release.apk'
   };
   const recommendation = document.querySelector('[data-download-recommendation]');
   const options = [...document.querySelectorAll('[data-abi]')];
@@ -23,7 +23,7 @@
     link.target = '_blank';
     link.rel = 'noreferrer';
     const label = link.querySelector('em');
-    if (label && apkUrls[link.dataset.abi]) label.textContent = link.dataset.abi === 'arm64-v8a' ? 'Download signed APK ↗' : 'Download preview APK ↗';
+    if (label && apkUrls[link.dataset.abi]) label.textContent = 'Download signed APK ↗';
   });
   options.forEach(option => option.classList.toggle('is-recommended', option.dataset.abi === abi));
 
