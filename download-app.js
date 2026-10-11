@@ -1,9 +1,11 @@
 (() => {
-  const releaseUrl = 'https://github.com/shesay734/SheApp/releases/tag/v0.0.6';
+  // Keep downloads on the public website so visitors do not need access to
+  // the private Android source repository.
+  const releaseUrl = 'downloads/';
   const apkUrls = {
-    'arm64-v8a': 'https://github.com/shesay734/SheApp/releases/download/v0.0.6/SheSay-android-arm64-v8a-release.apk',
-    'armeabi-v7a': 'https://github.com/shesay734/SheApp/releases/download/v0.0.6/SheSay-android-armeabi-v7a-release.apk',
-    x86_64: 'https://github.com/shesay734/SheApp/releases/download/v0.0.6/SheSay-android-x86_64-release.apk'
+    'arm64-v8a': 'downloads/SheSay-android-arm64-v8a-release.apk',
+    'armeabi-v7a': 'downloads/SheSay-android-armeabi-v7a-release.apk',
+    x86_64: 'downloads/SheSay-android-x86_64-release.apk'
   };
   const recommendation = document.querySelector('[data-download-recommendation]');
   const options = [...document.querySelectorAll('[data-abi]')];
