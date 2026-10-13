@@ -63,14 +63,14 @@
       </div>
       <p class="auth-note" style="margin-top:25px"><a href="index.html">← Back to website</a></p>
     </section>
-  </main>
+  <nav class="policy-links" aria-label="Policies and support"><a href="index.html">Company</a><a href="app.html">Download</a><a href="terms-of-service.html">Terms</a><a href="privacy-policy.html">Privacy</a><a href="refund-policy.html">Refund policy</a><a href="help-feedback.html">Help &amp; feedback</a></nav></main>
 
   <script src="site.js"></script>
   <script>
     const $ = id => document.getElementById(id);
     const sb = SheSay.client;
     const requestedNext = new URLSearchParams(location.search).get('next');
-    const returnTo = requestedNext && requestedNext.startsWith('/') && !requestedNext.startsWith('//')
+    const returnTo = requestedNext && requestedNext.startsWith('/') && !requestedNext.startsWith('//') && !/[\\\x00-\x20]/.test(requestedNext)
       ? requestedNext
       : 'wallet.html';
     let mode = location.hash === '#register'
@@ -132,7 +132,7 @@
         ? 'Create a SheSay account with your email.'
         : codeLogin
         ? 'Use a verification code sent to your email.'
-        : 'Log in to view your USD wallet balance on the web.';
+        : (returnTo.includes('help-feedback.html') ? 'Log in to chat with SheSay support.' : 'Log in to view your USD wallet balance on the web.');
       $('nicknameField').classList.toggle('hidden', !registering);
       $('passwordField').classList.toggle('hidden', codeLogin);
       $('password').required = !codeLogin;
@@ -142,7 +142,7 @@
         ? 'Sign up'
         : codeLogin
         ? 'Log in with code'
-        : 'Log in and open wallet';
+        : (returnTo.includes('help-feedback.html') ? 'Log in and contact support' : 'Log in and open wallet');
       $('existingChoice').classList.add('hidden');
       showNotice();
       setTimeout(renderCaptcha, 0);

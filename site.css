@@ -109,3 +109,113 @@ label { display: block; margin: 14px 0 6px; font-size: 14px; font-weight: 600; }
 .corporate-footer-links span { line-height: 1.6; }
 .app-footer { align-items: center; flex-wrap: wrap; line-height: 1.5; }
 .app-footer span { color: var(--muted); }
+
+/* Shared company, download, policy and support presentation. */
+.corporate-nav { flex-wrap:wrap; justify-content:flex-end; gap:12px 22px; }
+.corporate-header { gap:24px; }
+.corporate-nav a { white-space:nowrap; }
+.app-page .corporate-hero { grid-template-columns:minmax(0,1.4fr) minmax(180px,.6fr); }
+.app-page .corporate-hero h1 { font-size:clamp(43px,6vw,72px); }
+.app-page .app-hero-actions { margin-top:28px; gap:22px; }
+.app-page .app-hero-art { margin:auto; width:180px; height:180px; }
+.app-page .app-hero-art .hero-icon { width:126px; height:126px; }
+.app-page .app-hero-orbit,.app-page .app-hero-orbit::after { border-color:#b99bc5; }
+.app-page .home-intro,.app-page .home-section,.app-page .download-section,.app-page .app-trust { margin:0; padding:60px 0; border:0; border-top:1px solid #e2d8e4; border-radius:0; background:transparent; box-shadow:none; }
+.app-page .home-section h2,.app-page .home-intro h2,.app-page .app-trust h2,.app-page .download-section h2 { font-size:clamp(29px,4vw,43px); line-height:1.12; letter-spacing:-.055em; }
+.app-page .feature,.app-page .legal-card,.app-page .download-card { background:#fff; border-radius:20px; }
+.app-page .app-trust:has(>div:only-child) { display:block; }
+.app-page .legal-grid { gap:14px; }
+.policy-links { display:flex; flex-wrap:wrap; gap:12px 20px; margin:28px 0; font-size:13px; }
+.policy-links a { color:#654471; }
+.policy-paper { max-width:860px; margin:54px auto 0; padding:clamp(22px,5vw,54px); }
+.support-heading { margin:58px 0 24px; }
+.support-heading h1,.policy-paper h1 { margin:0; color:#2c1933; font-size:clamp(34px,5vw,56px); letter-spacing:-.055em; line-height:1.15; }
+.support-heading > p:last-child { color:#6c5d70; }
+.support-layout { display:grid; grid-template-columns:minmax(220px,.7fr) minmax(0,1.5fr); align-items:start; gap:24px; margin-top:20px; }
+[hidden] { display:none !important; }
+.support-guide h2 { margin-top:0; color:#2c1933; }
+.support-guide p { font-size:14px; color:#6c5d70; }
+.support-chat-title { display:flex; align-items:center; gap:12px; padding-bottom:16px; border-bottom:1px solid #e2d8e4; }
+.support-chat-title img { width:42px; height:42px; border-radius:12px; }
+.support-chat-title p { margin:0; font-size:12px; color:#6c5d70; }
+.support-messages { height:420px; overflow-y:auto; overscroll-behavior:contain; padding:20px 4px; }
+.support-message { width:fit-content; max-width:85%; padding:12px 16px; margin:0 0 14px; border-radius:16px 16px 16px 4px; background:#f4f0f5; overflow-wrap:anywhere; }
+.support-message.mine { margin-left:auto; background:#4d2b5a; color:white; border-radius:16px 16px 4px 16px; }
+.support-message strong,.support-message time { display:block; font-size:11px; }
+.support-message time { opacity:.75; }
+.support-message p { margin:5px 0; white-space:pre-wrap; }
+.support-message img { max-width:100%; max-height:260px; border-radius:8px; }
+.support-compose-actions { display:flex; justify-content:space-between; align-items:center; gap:12px; margin-top:12px; font-size:12px; }
+#message { width:100%; resize:vertical; min-height:90px; padding:12px; border:1px solid #d8c8de; border-radius:12px; font:inherit; }
+#message-form { border-top:1px solid #e2d8e4; }
+#send-status { min-height:1.8em; margin-bottom:0; font-size:13px; color:#654471; }
+button.corporate-button { border:0; cursor:pointer; font:inherit; font-weight:650; }
+button:disabled { opacity:.6; cursor:wait; }
+a:focus-visible,button:focus-visible,textarea:focus-visible { outline:3px solid #a765c5; outline-offset:4px; }
+@media(max-width:760px) {
+  .corporate-header { align-items:center; flex-wrap:wrap; gap:16px; }
+  .corporate-nav { justify-content:flex-start; gap:10px 16px; }
+  .corporate-nav a:nth-child(-n+2) { display:inline; }
+  .app-page .corporate-hero { display:block; }
+  .corporate-actions { flex-wrap:wrap; gap:16px; }
+  .corporate-footer-links { gap:28px; }
+  .app-page .home-intro,.app-page .home-section,.app-page .download-section,.app-page .app-trust { padding:42px 0; }
+  .support-layout { grid-template-columns:1fr; }
+  .support-chat { grid-row:1; padding:18px; }
+  .support-messages { height: min(52vh,420px); }
+  .support-heading { margin-top:38px; }
+  .support-compose-actions { flex-wrap:wrap; }
+  .policy-paper { margin-top:32px; }
+}
+
+/* Download page: a product story and device chooser, distinct from the company narrative. */
+.product-hero { display:grid; grid-template-columns:1fr 1fr; align-items:center; gap:70px; padding:70px 0 58px; }
+.product-hero h1 { margin:0; color:#2c1933; font-size:clamp(46px,5.5vw,74px); line-height:1.03; letter-spacing:-.065em; }
+.product-hero-copy > p:not(.corporate-kicker) { max-width:430px; margin:24px 0; color:#6c5d70; font-size:18px; line-height:1.7; }
+.product-actions { display:flex; align-items:center; flex-wrap:wrap; gap:20px; }
+.product-actions .corporate-button { gap:18px; }
+.product-availability { display:flex; flex-wrap:wrap; align-items:center; gap:9px; margin-top:22px; color:#77687b; font-size:12px; }
+.availability-dot { width:7px; height:7px; border-radius:50%; background:#51876d; }
+.product-story { padding:22px; border:1px solid #e0d3e4; border-radius:30px; background:#e8deeb; transform:rotate(2deg); }
+.story-heading { display:flex; align-items:center; gap:12px; margin-bottom:20px; font-size:12px; line-height:1.5; color:#654c70; }
+.story-heading img { width:42px; height:42px; border-radius:12px; }
+.story-heading strong { color:#392040; font-size:14px; }
+.story-spark { margin-left:auto; font-size:34px; color:#795089; }
+.story-moment { position:relative; min-height:224px; overflow:hidden; padding:24px; border-radius:20px; background:#4d2b5a; color:#fff; }
+.story-tag { position:relative; z-index:1; font-size:10px; font-weight:750; letter-spacing:.12em; }
+.story-moment p { position:relative; z-index:1; margin:22px 0 0; font-size:31px; font-weight:650; line-height:1.2; letter-spacing:-.04em; }
+.story-art { position:absolute; right:-42px; bottom:-50px; width:210px; height:210px; transform:rotate(-25deg); }
+.story-art span { position:absolute; width:92px; height:210px; border-radius:100%; background:#b58fc2; opacity:.45; }
+.story-art span:nth-child(2) { transform:rotate(60deg); }.story-art span:nth-child(3) { transform:rotate(120deg); }
+.story-bottom { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:12px; }
+.story-bottom > div { display:flex; flex-direction:column; align-items:start; min-height:150px; padding:18px; border-radius:18px; }
+.story-ideas { background:#fffaf2; color:#765a46; }.story-rooms { background:#d5e3da; color:#385947; }
+.story-bottom strong { margin-top:12px; font-size:17px; line-height:1.25; letter-spacing:-.025em; }
+.story-bottom > div > div { margin-top:auto; padding-top:10px; font-size:25px; line-height:1; }
+.app-page .download-section { padding:32px; border:1px solid #e2d8e4; border-radius:26px; background:#fff; }
+.app-page .download-card { background:#f7f3f8; border:0; }.app-page .download-card-muted { background:#f6f5f2; }
+.product-features { padding:64px 0; }
+.product-feature-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:20px; margin-top:28px; }
+.app-page .product-feature-grid .feature { margin:0; padding:24px; background:transparent; border:0; border-top:2px solid #d9c8df; border-radius:0; box-shadow:none; }
+.product-feature-grid .feature-icon { margin-bottom:20px; width:38px; height:38px; }
+.product-note { display:grid; grid-template-columns:1fr 2fr; column-gap:50px; padding:30px 0; border-top:1px solid #e2d8e4; }
+.product-note p { margin:0; color:#6c5d70; }.product-note > a { grid-column:2; margin-top:12px; }
+.product-support { display:flex; justify-content:space-between; align-items:center; gap:32px; margin-top:36px; padding:36px; border-radius:24px; background:#e4d7e8; }
+.product-support h2 { margin:0; color:#392040; font-size:32px; line-height:1.2; letter-spacing:-.04em; }
+.product-support p:last-child { max-width:570px; margin-bottom:0; color:#6c5d70; }
+.product-support > a { flex-shrink:0; }
+.app-page .legal-section { border:0; padding:48px 0 24px; }
+.app-page .legal-section .legal-grid { grid-template-columns:repeat(3,1fr); }
+.app-page .legal-section .legal-card { min-height:0; background:transparent; border:1px solid #dfd3e3; }
+@media(max-width:900px) { .product-hero { gap:30px; }.product-story { transform:none; }.story-moment p { font-size:26px; } }
+@media(max-width:760px) {
+ .product-hero { grid-template-columns:1fr; padding:44px 0 32px; gap:32px; }
+ .product-hero h1 { font-size:clamp(45px,10vw,64px); }.product-hero-copy > p:not(.corporate-kicker) { font-size:16px; }
+ .product-story { max-width:460px; width:100%; justify-self:center; padding:16px; }
+ .app-page .download-section { padding:22px; }
+ .product-features { padding:42px 0; }.product-feature-grid { grid-template-columns:1fr; gap:12px; }
+ .app-page .product-feature-grid .feature { padding:20px 0; }.product-feature-grid .feature-icon { margin-bottom:12px; }
+ .product-note { grid-template-columns:1fr; gap:8px; }.product-note > a { grid-column:1; }
+ .product-support { flex-direction:column; align-items:start; padding:26px; gap:22px; }
+ .app-page .legal-section .legal-grid { grid-template-columns:1fr; }
+}

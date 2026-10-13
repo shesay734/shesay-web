@@ -3,7 +3,7 @@ const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const vm = require('node:vm');
 const html = fs.readFileSync(require('node:path').join(__dirname, '../auth.html'), 'utf8');
-test('password/code switch sends and verifies OTP through existing auth methods', async () => {
+for (const [next, expected] of [['/post.html?id=post', '/post.html?id=post'], ['/help-feedback.html', '/help-feedback.html'], ['//example.com', 'wallet.html'], ['/\\example.com', 'wallet.html']]) test(`password/code login preserves safe return path: ${next}`, async () => {
   const elements = new Map();
   for (const [, id] of html.matchAll(/id="([^"]+)"/g)) {
     const classes = new Set();
@@ -18,7 +18,7 @@ test('password/code switch sends and verifies OTP through existing auth methods'
   const context = vm.createContext({
     document: {getElementById: id => elements.get(id)},
     window: {}, URLSearchParams, setTimeout() {}, history: {replaceState() {}},
-    location: {search: '?next=/post.html?id=post', hash: '', replace(v) { destination = v; }},
+    location: {search: '?next=' + encodeURIComponent(next), hash: '', replace(v) { destination = v; }},
     SheSay: {client: {auth: {
       async signInWithOtp(args) { calls.push(['send', args]); return {}; },
       async verifyOtp(args) { calls.push(['verify', args]); return {}; },
@@ -40,7 +40,7 @@ test('password/code switch sends and verifies OTP through existing auth methods'
   await get('form').onsubmit({preventDefault() {}});
   assert.equal(calls[1][0], 'verify');
   assert.equal(calls[1][1].token, '123456');
-  assert.equal(destination, '/post.html?id=post');
+  assert.equal(destination, expected);
   get('passwordLoginTab').onclick();
   assert.equal(get('passwordField').classList.contains('hidden'), false);
   assert.equal(get('verifyFields').classList.contains('hidden'), true);
