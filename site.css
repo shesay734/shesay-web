@@ -2,7 +2,7 @@
 .shared-login { position: sticky; top: 12px; z-index: 10; }
 .shared-post .open-app { display: flex; margin-top: 28px; }
 * { box-sizing: border-box; }
-html, body { margin: 0; background: #f6f3f7; color: var(--ink); }
+html, body { margin: 0; background: #fff; color: var(--ink); }
 body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif; font-size: 15px; line-height: 1.8; }
 a { color: var(--app-purple); text-decoration: none; }
 a:hover { color: #8e4cab; }
@@ -38,7 +38,7 @@ label { display: block; margin: 14px 0 6px; font-size: 14px; font-weight: 600; }
 @media (max-width: 560px) { .site-shell, .wallet-shell { width: min(100% - 26px, 720px); padding-top: 8px; }.site-nav { gap: 10px; }.home-header { margin:0 0 14px; min-height:50px; padding:0 13px; border-radius:14px; }.hero { min-height:248px; gap:14px; padding:38px 24px; border-radius:22px; }.hero h1 { font-size:38px; }.hero .tagline { font-size:15px; }.hero-icon { width:70px; height:70px; border-radius:18px; }.home-intro,.home-section { padding:18px; border-radius:17px; }.feature { padding:16px; }.legal-grid { grid-template-columns:1fr; }.legal-card { min-height:0; }.payment-options { grid-template-columns: 1fr; }.code-row { display: grid; grid-template-columns: 1fr; }.code-row .button { width: 100%; } }
 
 /* Company homepage */
-.corporate-page { background:#f4f0f5; color:#26162d; }
+.corporate-page { background:#fff; color:#26162d; }
 .corporate-shell { width:min(1120px, calc(100% - 48px)); margin:0 auto; padding:24px 0 0; }
 .corporate-header { display:flex; align-items:center; justify-content:space-between; min-height:52px; }
 .corporate-brand { display:inline-flex; align-items:center; gap:10px; color:#26162d; font-size:20px; font-weight:750; letter-spacing:-.04em; }
