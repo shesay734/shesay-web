@@ -219,3 +219,64 @@ a:focus-visible,button:focus-visible,textarea:focus-visible { outline:3px solid 
  .product-support { flex-direction:column; align-items:start; padding:26px; gap:22px; }
  .app-page .legal-section .legal-grid { grid-template-columns:1fr; }
 }
+
+/* Company homepage: editorial brand narrative, distinct from the product page. */
+.company-home .corporate-header { padding-bottom:24px; border-bottom:1px solid #ded3e0; }
+.company-hero { position:relative; isolation:isolate; overflow:hidden; padding:40px 0 56px; }
+.company-hero-top { display:flex; justify-content:space-between; gap:20px; align-items:center; }
+.company-hero-top .corporate-kicker { margin:0; }.company-hero-top > span { color:#77687b; font-size:12px; }
+.company-hero h1 { position:relative; z-index:1; margin:58px 0 35px; color:#2c1933; font-size:clamp(56px,7.8vw,106px); line-height:1.03; font-weight:650; letter-spacing:-.065em; }
+.company-hero h1 em { font-family:Georgia,'Times New Roman',serif; font-weight:400; color:#795089; letter-spacing:-.055em; }
+.company-hero-bottom { position:relative; z-index:1; display:flex; gap:48px; align-items:center; }
+.company-hero-bottom > p { max-width:490px; margin:0; color:#6c5d70; font-size:17px; line-height:1.75; }
+.company-hero-bottom .corporate-button { flex-shrink:0; gap:24px; }
+.company-visual { position:absolute; z-index:-1; width:410px; height:340px; right:-65px; top:100px; opacity:.6; }
+.connection-loop { position:absolute; width:220px; height:290px; border:1px solid #b394bf; border-radius:50%; transform:rotate(30deg); }
+.loop-two { left:70px; top:25px; transform:rotate(-25deg); }.loop-three { left:135px; top:-10px; transform:rotate(55deg); }
+.connection-point { position:absolute; width:17px; height:17px; border-radius:50%; background:#b59ac1; box-shadow:0 0 0 9px #ede5f0; }.point-one { top:37px; left:114px; }.point-two { bottom:38px; right:92px; }
+.company-paths { display:grid; grid-template-columns:repeat(3,1fr); border-top:1px solid #d8cadc; border-bottom:1px solid #d8cadc; }
+.company-paths > a { padding:23px 25px; color:#392040; border-right:1px solid #d8cadc; }.company-paths > a:first-child { padding-left:0; }.company-paths > a:last-child { border:0; }
+.company-paths > a > span { font-size:10px; letter-spacing:.13em; color:#8e54a4; font-weight:700; }
+.company-paths strong { display:flex; justify-content:space-between; gap:10px; margin-top:7px; font-size:17px; font-weight:600; }
+.company-paths a:hover { background:#ece3ef; }
+.company-home #about { border:0; padding:80px 0; }
+.company-home #about h2 { max-width:400px; }
+.company-values { padding:44px; background:#4d2b5a; border:0; border-radius:26px; }
+.company-values .corporate-section-label { color:#d8b9e2; }
+.company-values h2 { color:#fff; max-width:470px; }
+.company-values .corporate-section-heading p { color:#e0d0e5; }
+.company-values .value-grid { gap:30px; }
+.company-values .value-card { padding:22px 0 0; min-height:0; border-top:1px solid #876491; border-radius:0; box-shadow:none; background:transparent; }
+.company-values .value-number { color:#d3b3de; }.company-values .value-card h3 { color:#fff; margin-top:28px; }.company-values .value-card p { color:#e0d0e5; }
+.company-home .corporate-product { border:0; padding:80px 0; }
+.company-home .corporate-product-card { background:#e3d4e8; box-shadow:none; min-height:240px; }
+.company-home .corporate-product-card h3 { color:#392040; }.company-home .corporate-product-card-label,.company-home .corporate-card-arrow { color:#795089; }.company-home .corporate-product-card p:last-child { color:#6c5d70; }
+.company-home .corporate-product-card::after { display:none; }
+.company-business .value-grid { display:block; }
+.company-business .value-card { display:grid; grid-template-columns:50px minmax(180px,1fr) 1.6fr; align-items:baseline; gap:24px; padding:24px 0; min-height:0; border-top:1px solid #ded3e0; border-radius:0; background:transparent; box-shadow:none; }
+.company-business .value-card h3 { margin:0; }.company-business .value-card p { max-width:530px; }
+.company-contact { display:grid; grid-template-columns:1fr 1fr; gap:80px; }
+.company-contact > div > p:last-child { max-width:390px; margin-top:22px; color:#6c5d70; }
+.company-contact-link { display:flex; justify-content:space-between; gap:20px; padding:24px 0; border-bottom:1px solid #ded3e0; color:#392040; }
+.company-contact-link:first-child { padding-top:0; }.company-contact-link strong { display:block; font-size:21px; letter-spacing:-.025em; }
+.company-contact-link small { display:block; margin-top:7px; color:#6c5d70; font-size:14px; line-height:1.6; }.company-contact-link > span:last-child { font-size:24px; }
+.company-address { padding-top:24px; color:#77687b; font-size:13px; }.company-address > span { font-size:11px; font-weight:650; letter-spacing:.04em; }.company-address address { margin-top:7px; font-style:normal; }
+.company-home .corporate-footer { border-top:1px solid #ded3e0; }
+@media(max-width:760px) {
+ .company-home .corporate-header { padding-bottom:20px; }
+ .company-hero { padding:30px 0 38px; }.company-hero-top { align-items:start; flex-direction:column; gap:9px; }
+ .company-hero h1 { font-size:clamp(48px,11.5vw,78px); margin:38px 0 24px; }
+ .company-hero-bottom { align-items:start; flex-direction:column; gap:22px; }.company-hero-bottom > p { font-size:16px; }
+ .company-visual { right:-210px; top:65px; opacity:.25; }
+ .company-paths { grid-template-columns:1fr; }.company-paths > a,.company-paths > a:first-child { padding:17px 0; border:0; border-bottom:1px solid #ded3e0; }.company-paths > a:last-child { border:0; }
+ .company-home #about,.company-home .corporate-product { padding:50px 0; }
+ .company-values { padding:28px 22px; }.company-values .value-grid { gap:24px; }.company-values .value-card h3 { margin-top:14px; }
+ .company-business .value-card { grid-template-columns:28px 1fr; gap:10px 14px; }.company-business .value-card p { grid-column:2; }
+ .company-contact { grid-template-columns:1fr; gap:30px; }
+}
+@media(max-width:560px) {
+ .company-home .corporate-product-card { align-items:flex-start; gap:16px; padding:24px; min-height:0; }
+ .company-home .corporate-product-card > img { width:48px; height:48px; border-radius:14px; }
+ .company-home .corporate-product-card h3 { font-size:24px; line-height:1.2; }
+ .company-home .corporate-card-arrow { top:12px; right:15px; }
+}
