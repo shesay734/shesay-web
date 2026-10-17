@@ -275,3 +275,9 @@ a:focus-visible,button:focus-visible,textarea:focus-visible { outline:3px solid 
  .company-home .corporate-product-card h3 { font-size:24px; line-height:1.2; }
  .company-home .corporate-card-arrow { top:12px; right:15px; }
 }
+
+
+/* Keep policy navigation readable as the full About Us list wraps. */
+.corporate-footer-links { flex-wrap:wrap; gap:32px; }
+.corporate-footer-bottom { flex-wrap:wrap; gap:8px 24px; }
+.company-home .legal-section { margin-bottom:24px; }
