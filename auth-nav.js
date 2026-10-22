@@ -22,8 +22,8 @@
       <span class="account-nav-chevron" aria-hidden="true">⌄</span>
     </button>
     <div class="account-nav-dropdown" id="account-nav-dropdown" hidden>
-      <a href="index.html" role="menuitem">主页</a>
-      <button type="button" role="menuitem" class="account-nav-signout">退出登录</button>
+      <a href="index.html" role="menuitem">Home</a>
+      <button type="button" role="menuitem" class="account-nav-signout">Sign out</button>
     </div>`;
   nav.append(account);
 
@@ -100,7 +100,7 @@
       account.hidden = false;
       footerJoinLinks.forEach(link => {
         link.href = 'index.html';
-        link.textContent = '主页';
+        link.textContent = 'Home';
       });
     } catch (error) {
       if (version === renderVersion) {
@@ -117,7 +117,7 @@
       if (error) throw error;
       location.reload();
     } catch (error) {
-      alert('退出登录失败，请重试。');
+      alert('Sign out failed. Please try again.');
       signOutButton.disabled = false;
     }
   });

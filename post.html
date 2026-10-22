@@ -49,7 +49,7 @@
     function bindPurchaseButtons() {
       document.querySelectorAll('[data-purchase]').forEach(button => button.onclick = async () => {
         if (!session || session.user?.is_anonymous) {
-          showNotice('Please log in before subscribing. 请先登录后再订阅。', 'error');
+          showNotice('Please log in before subscribing.', 'error');
           document.getElementById('login-card').classList.remove('hidden');
           document.getElementById('login-link').focus();
           return;
