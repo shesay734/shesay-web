@@ -31,13 +31,13 @@ async function load(search, response, ok = true) {
 
 test('share card exposes an encoded shesay tea-room link and RPC data', async () => {
   const {elements: e, requests} = await load('?id=room%26one', {
-    name: '测试茶室', announcement: '<script>not markup</script>',
+    name: 'Test tea room', announcement: '<script>not markup</script>',
     background_image_url: 'https://example.test/bg.png',
     avatar_url: 'https://example.test/avatar.png',
   });
   assert.equal(e.get('openApp').href, 'shesay://tea-room?id=room%26one');
   assert.equal(e.get('card').classList.contains('hidden'), false);
-  assert.equal(e.get('name').textContent, '测试茶室');
+  assert.equal(e.get('name').textContent, 'Test tea room');
   assert.equal(e.get('announcement').textContent, '<script>not markup</script>');
   assert.equal(e.get('hero').style.backgroundImage, 'url("https://example.test/bg.png")');
   assert.equal(e.get('avatar').classList.contains('hidden'), false);
@@ -48,20 +48,20 @@ test('missing id does not fetch or expose an inert join button', async () => {
   const {elements: e, requests} = await load('?id=');
   assert.equal(requests.length, 0);
   assert.equal(e.get('card').classList.contains('hidden'), true);
-  assert.equal(e.get('status').textContent, '茶室链接无效');
+  assert.equal(e.get('status').textContent, 'Invalid tea room link');
 });
 
 test('missing room and failed RPC keep the card hidden with an error', async () => {
   for (const [data, ok] of [[null, true], [{}, false]]) {
     const {elements: e} = await load('?id=room', data, ok);
     assert.equal(e.get('card').classList.contains('hidden'), true);
-    assert.equal(e.get('status').textContent, '茶室不存在或暂时无法加载');
+    assert.equal(e.get('status').textContent, 'This tea room does not exist or is temporarily unavailable');
   }
 });
 
 test('array RPC shape works and unsafe image URLs are not rendered', async () => {
   const {elements: e} = await load('?id=room', [{
-    name: '茶室', background_image_url: 'javascript:alert(1)', avatar_url: 'data:image/png;base64,x',
+    name: 'Tea room', background_image_url: 'javascript:alert(1)', avatar_url: 'data:image/png;base64,x',
   }]);
   assert.equal(e.get('openApp').href, 'shesay://tea-room?id=room');
   assert.equal(e.get('hero').style.backgroundImage, undefined);
