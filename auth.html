@@ -7,8 +7,7 @@
   <meta name="theme-color" content="#a765c5">
   <title>Log in or sign up · SheSay</title>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="https://js.hcaptcha.com/1/api.js?onload=onHcaptchaLoaded&render=explicit" async defer></script>
-  <link rel="stylesheet" href="site.css?v=auth-switch-1">
+  <link rel="stylesheet" href="site.css?v=turnstile-1">
 </head>
 <body>
   <main class="auth-stage">
@@ -41,6 +40,8 @@
           <input id="password" type="password" autocomplete="current-password" required minlength="6" maxlength="16" placeholder="6–16 characters, no spaces">
         </div>
 
+        <div id="captcha" class="captcha-wrap" role="group" aria-label="Human verification"></div>
+
         <div id="verifyFields" class="hidden">
           <label for="code">Email verification code</label>
           <div class="code-row">
@@ -49,8 +50,6 @@
           </div>
           <p id="registrationNote" class="auth-note">The code confirms email ownership. If this email already has an account, you can keep it or permanently delete it before creating a new one.</p>
         </div>
-
-        <div id="captcha" class="captcha-wrap" aria-label="Human verification"></div>
 
         <button id="submit" class="button auth-submit" type="submit">Log in and open wallet</button>
       </form>
@@ -80,6 +79,7 @@
       : 'login';
     let challengeId = null;
     let captchaWidget = null;
+    let captchaSize = null;
     let captchaToken = '';
     let verifiedSession = null;
 
@@ -98,19 +98,46 @@
       if (password.length < 6 || password.length > 16 || /\s/.test(password)) throw new Error('Password must be 6–16 characters with no spaces.');
     }
     function renderCaptcha() {
-      if (!window.hcaptcha || captchaWidget !== null) return;
-      captchaWidget = hcaptcha.render('captcha', {
-        sitekey: 'e57677ec-021c-445c-8570-cc848e5ae820',
+      if (!window.turnstile || captchaWidget !== null) return;
+      captchaSize = $('captcha').clientWidth < 300 ? 'compact' : 'normal';
+      captchaWidget = window.turnstile.render('#captcha', {
+        sitekey: '0x4AAAAAAFiIwYxQwNiepNxZ',
+        size: captchaSize,
         callback: token => { captchaToken = token; },
         'expired-callback': () => { captchaToken = ''; },
+        'timeout-callback': () => { captchaToken = ''; },
+        'error-callback': () => {
+          captchaToken = '';
+          showNotice('Human verification could not load. Check your connection and reload this page.', 'error');
+        },
         theme: 'light',
       });
     }
     function resetCaptcha() {
       captchaToken = '';
-      if (captchaWidget !== null && window.hcaptcha) hcaptcha.reset(captchaWidget);
+      if (captchaWidget !== null && window.turnstile) window.turnstile.reset(captchaWidget);
     }
-    window.onHcaptchaLoaded = renderCaptcha;
+    function takeCaptchaToken() {
+      if (!captchaToken) throw new Error('Complete the human verification first.');
+      const token = captchaToken;
+      captchaToken = '';
+      return token;
+    }
+    window.onTurnstileLoaded = renderCaptcha;
+    window.onTurnstileLoadError = () => {
+      captchaToken = '';
+      showNotice('Human verification could not load. Check your connection and reload this page.', 'error');
+    };
+    if (window.ResizeObserver) {
+      new ResizeObserver(() => {
+        const size = $('captcha').clientWidth < 300 ? 'compact' : 'normal';
+        if (captchaWidget === null || size === captchaSize) return;
+        captchaToken = '';
+        window.turnstile.remove(captchaWidget);
+        captchaWidget = null;
+        renderCaptcha();
+      }).observe($('captcha'));
+    }
 
     function render() {
       const registering = mode === 'register';
@@ -196,14 +223,18 @@
       const email = $('email').value.trim();
       if (!/^\S+@\S+\.\S+$/.test(email)) throw new Error('Enter a valid email address.');
       if (mode === 'register') registrationValuesValid();
-      if (!captchaToken) throw new Error('Complete the human verification first.');
-      const started = mode === 'register'
-        ? await SheSay.fusion('startEmailRegistration', { email })
-        : null;
-      const { error } = await sb.auth.signInWithOtp({ email, options: { captchaToken } });
-      if (error) throw error;
-      challengeId = started?.challengeId ?? null;
-      showNotice('Verification code sent. Check your email.', 'success');
+      const token = takeCaptchaToken();
+      try {
+        const started = mode === 'register'
+          ? await SheSay.fusion('startEmailRegistration', { email })
+          : null;
+        const { error } = await sb.auth.signInWithOtp({ email, options: { captchaToken: token } });
+        if (error) throw error;
+        challengeId = started?.challengeId ?? null;
+        showNotice('Verification code sent. Check your email.', 'success');
+      } finally {
+        resetCaptcha();
+      }
     }
     async function verifyOtpLogin() {
       const email = $('email').value.trim();
@@ -228,10 +259,10 @@
       showNotice('Processing securely…');
       try {
         if (mode === 'login') {
-          if (!captchaToken) throw new Error('Complete the human verification first.');
+          const token = takeCaptchaToken();
           const { error } = await sb.auth.signInWithPassword({
             email: $('email').value.trim(), password: $('password').value,
-            options: { captchaToken },
+            options: { captchaToken: token },
           });
           if (error) throw error;
           location.replace(returnTo);
@@ -241,10 +272,13 @@
           await verifyRegistration();
         }
       } catch (error) {
-        resetCaptcha();
+        if (mode !== 'login') resetCaptcha();
         showNotice(error.message || 'Something went wrong. Please complete the verification again and retry.', 'error');
       }
-      finally { button.disabled = false; }
+      finally {
+        if (mode === 'login') resetCaptcha();
+        button.disabled = false;
+      }
     };
     $('keepAccount').onclick = () => location.replace(returnTo);
     $('replaceAccount').onclick = async () => {
@@ -254,6 +288,7 @@
         return;
       }
       const button = $('replaceAccount'); button.disabled = true;
+      const token = takeCaptchaToken();
       try {
         await SheSay.fusion('replaceExistingEmailAccount', {
           challengeId, password: $('password').value, nickname: $('nickname').value.trim(),
@@ -261,17 +296,17 @@
         await sb.auth.signOut();
         const { error } = await sb.auth.signInWithPassword({
           email: $('email').value.trim(), password: $('password').value,
-          options: { captchaToken },
+          options: { captchaToken: token },
         });
         if (error) throw error;
         location.replace(returnTo);
       } catch (error) {
-        resetCaptcha();
         showNotice(error.message || 'Could not create the new account. Please complete the verification again and retry.', 'error');
       }
-      finally { button.disabled = false; }
+      finally { resetCaptcha(); button.disabled = false; }
     };
     render();
   </script>
+  <script src="https://challenges.cloudflare.com/turnstile/v0/api.js?onload=onTurnstileLoaded&amp;render=explicit" async defer onerror="onTurnstileLoadError()"></script>
 </body>
 </html>
