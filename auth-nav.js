@@ -6,9 +6,14 @@
 
   const guestLink = nav.querySelector('a[href^="auth.html"]');
   if (guestLink) {
-    // Return to the page that opened the sign-in form, not the wallet fallback.
-    const next = location.pathname + location.search + location.hash;
-    guestLink.href = 'auth.html?next=' + encodeURIComponent(next) + '#register';
+    // Corporate home uses the wallet as the account Home destination. Other
+    // account links keep their page context (for example, support chat).
+    if (guestLink.dataset.authHome === 'wallet') {
+      guestLink.href = 'auth.html#register';
+    } else {
+      const next = location.pathname + location.search + location.hash;
+      guestLink.href = 'auth.html?next=' + encodeURIComponent(next) + '#register';
+    }
   }
 
   const footerJoinLinks = [...document.querySelectorAll('.corporate-footer a[href="auth.html#register"]')];
@@ -22,7 +27,7 @@
       <span class="account-nav-chevron" aria-hidden="true">⌄</span>
     </button>
     <div class="account-nav-dropdown" id="account-nav-dropdown" hidden>
-      <a href="index.html" role="menuitem">Home</a>
+      <a href="wallet.html" role="menuitem">Home</a>
       <button type="button" role="menuitem" class="account-nav-signout">Sign out</button>
     </div>`;
   nav.append(account);
@@ -99,7 +104,7 @@
       if (guestLink) guestLink.hidden = true;
       account.hidden = false;
       footerJoinLinks.forEach(link => {
-        link.href = 'index.html';
+        link.href = 'wallet.html';
         link.textContent = 'Home';
       });
     } catch (error) {

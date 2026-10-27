@@ -69,8 +69,12 @@
     const $ = id => document.getElementById(id);
     const sb = SheSay.client;
     const requestedNext = new URLSearchParams(location.search).get('next');
-    const returnTo = requestedNext && requestedNext.startsWith('/') && !requestedNext.startsWith('//') && !/[\\\x00-\x20]/.test(requestedNext)
+    const safeNext = requestedNext && requestedNext.startsWith('/') && !requestedNext.startsWith('//') && !/[\\\x00-\x20]/.test(requestedNext)
       ? requestedNext
+      : null;
+    const nextPath = safeNext ? safeNext.split(/[?#]/, 1)[0] : '';
+    const returnTo = safeNext && nextPath !== '/' && nextPath !== '/index.html'
+      ? safeNext
       : 'wallet.html';
     let mode = location.hash === '#register'
       ? 'register'
