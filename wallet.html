@@ -28,6 +28,8 @@
         <button id="refresh" class="button ghost" type="button">Refresh</button>
       </section>
 
+      <p class="refund-note" role="note"><strong>Payment processing fees are non-refundable.</strong> This applies even if SheSay covered these fees when you topped up, so a refund may be approximately 5% less than the original top-up amount. <a href="refund-policy.html#processing-fees">Refund policy</a></p>
+
       <section class="paper wallet-section" aria-labelledby="topup-title">
         <h2 id="topup-title">Top up</h2>
         <p class="muted">Pay securely by card with Stripe. <strong class="rate">Every $1 = 10 credits</strong>, so $5 gets you 50 credits.</p>
@@ -38,7 +40,6 @@
           <button class="topup-amount" type="button" role="radio" aria-checked="false" data-amount="50"><strong>500 credits</strong><span>$50</span></button>
         </div>
         <button id="stripeCheckout" class="button topup-pay" type="button">Pay $10 with Stripe · get 100 credits</button>
-        <p id="refundNote" class="refund-note">Processing fees are non-refundable. SheSay covers Stripe's fee (2.9% + $0.30) when you top up, but Stripe keeps it if a top-up is refunded, so a refund of this top-up would be <strong>$9.41</strong>. <a href="refund-policy.html#processing-fees">Refund policy</a></p>
         <div id="notice" class="notice" aria-live="polite"></div>
         <div class="gift-card">
           <button id="giftCardToggle" class="link-button" type="button" aria-expanded="false" aria-controls="giftCardPanel">Have a gift card? Redeem it</button>
@@ -75,8 +76,6 @@
     const CREDITS_PER_USD = 10;
     const money = value => '$' + Number(value || 0).toFixed(2);
     // Balances are stored in USD; the app shows them as credits with trailing zeros trimmed.
-    // Stripe card pricing: 2.9% + $0.30, rounded to the cent like Stripe does.
-    const refundableUsd = usd => (usd * 100 - (Math.round(usd * 2.9) + 30)) / 100;
     const credits = usd => Number((Number(usd || 0) * CREDITS_PER_USD).toFixed(6)).toLocaleString('en-US', { maximumFractionDigits: 6 }) + ' credits';
     function topupStatus(row) {
       if (row.order_status === 'refunded' || row.status === 'refunded') return ['Refunded', 'neutral'];
@@ -131,7 +130,6 @@
       topupAmount = Number(button.dataset.amount);
       document.querySelectorAll('.topup-amount').forEach(other => other.setAttribute('aria-checked', String(other === button)));
       $('stripeCheckout').textContent = `Pay $${topupAmount} with Stripe · get ${credits(topupAmount)}`;
-      $('refundNote').querySelector('strong').textContent = money(refundableUsd(topupAmount));
     }
     async function startCheckout() {
       const button = $('stripeCheckout');
