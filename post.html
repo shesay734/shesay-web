@@ -12,6 +12,7 @@
     .shared-post{padding:clamp(26px,6vw,55px)}
     .shared-post .meta{color:var(--muted);font:13px/1.6 ui-rounded,"PingFang SC",sans-serif}
     .shared-post .body{margin-top:28px;white-space:pre-wrap;line-height:2;overflow-wrap:anywhere}
+    .shared-post .body-image{display:block;max-width:100%;height:auto;margin:12px 0;border-radius:12px}
     .post-error{padding:45px 0;text-align:center;color:#a52c54}
     .updates{margin-top:38px}.updates h2{font-size:18px}.update{padding:18px 0;border-top:1px solid var(--line)}
     .gate{margin-top:24px;padding:20px;border:1px solid var(--line);border-radius:14px;background:#faf8fb;text-align:center}
@@ -40,6 +41,22 @@
     let shared = null;
     const escapeHtml = value => { const node = document.createElement('div'); node.textContent = value ?? ''; return node.innerHTML; };
     const money = value => Number(value || 0).toFixed(2);
+    // Post bodies embed images as `![](https://…)`; render those as images and
+    // keep everything else as escaped text.
+    const bodyHtml = value => {
+      const text = String(value ?? '');
+      const pattern = /!\[[^\]]*\]\(([^)\s]+)\)/g;
+      let html = '';
+      let last = 0;
+      for (const match of text.matchAll(pattern)) {
+        html += escapeHtml(text.slice(last, match.index));
+        let src = '';
+        try { const url = new URL(match[1]); if (url.protocol === 'https:') src = url.href; } catch (_) {}
+        html += src ? `<img class="body-image" src="${escapeHtml(src)}" alt="" loading="lazy">` : escapeHtml(match[0]);
+        last = match.index + match[0].length;
+      }
+      return html + escapeHtml(text.slice(last));
+    };
     const nextUrl = () => `auth.html?next=${encodeURIComponent(location.pathname + location.search)}#login`;
     function showNotice(message = '', kind = '') { notice.textContent = message; notice.className = `notice ${kind}`; }
     function gateHtml(scope, price, groupCode, contentId) {
@@ -76,17 +93,17 @@
     function render(row) {
       shared = row;
       document.title = `${row.title || 'Post'} · SheSay`;
-      let html = `<p class="eyebrow">SHE SAY · SHARED POST</p><div class="meta">${escapeHtml(row.author_name || 'SheSay user')}</div><h1>${escapeHtml(row.title || 'Untitled post')}</h1>`;
+      let html = `<p class="eyebrow">SHE SAY · SHARED POST</p><div class="meta">${escapeHtml(row.author_name || 'SheSay user')}</div>${row.title ? `<h1>${escapeHtml(row.title)}</h1>` : ''}`;
       if (row.locked) {
         html += gateHtml(row.scope, row.price, row.group_code, row.id);
       } else {
-        html += `<div class="body">${escapeHtml(row.content || '')}</div>`;
+        html += `<div class="body">${bodyHtml(row.content)}</div>`;
         const updates = Array.isArray(row.updates) ? row.updates : [];
         if (updates.length) {
           html += '<section class="updates"><h2>Later updates</h2>';
           for (const update of updates) {
             html += `<div class="update"><div class="meta">${new Date(update.created_at).toLocaleString()}</div>`;
-            html += update.locked ? gateHtml(update.scope, update.price, null, update.id) : `<div class="body">${escapeHtml(update.content || '')}</div>`;
+            html += update.locked ? gateHtml(update.scope, update.price, null, update.id) : `<div class="body">${bodyHtml(update.content)}</div>`;
             html += '</div>';
           }
           html += '</section>';
