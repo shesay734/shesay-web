@@ -9,22 +9,37 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <link rel="stylesheet" href="site.css">
 </head>
-<body>
+<body class="wallet-page">
   <main class="wallet-shell">
-    <div class="brand">SHE SAY / WALLET</div>
+    <header class="wallet-header">
+      <a class="corporate-brand" href="index.html" aria-label="SheSay home"><img src="app-icon.png" alt=""><span>SheSay</span></a>
+      <button id="logout" class="button ghost wallet-logout hidden" type="button">Log out</button>
+    </header>
     <section id="loading" class="paper wallet-card muted">Signing in securely and loading your balance…</section>
-    <section id="wallet" class="paper wallet-card hidden">
-      <h1>Your wallet</h1>
-      <p id="name" class="wallet-name">SheSay user</p>
-      <div id="balance" class="amount">$0.00</div>
-      <p class="muted">Use your balance to subscribe, purchase content, and support authors.</p>
-      <div class="wallet-actions"><button id="refresh" class="button" type="button">Refresh balance</button><button id="logout" class="button ghost" type="button">Log out</button></div>
-      <div class="recharge">
-        <strong>Top up</strong>
-        <p class="muted">Choose a method to begin.</p>
-        <div id="paymentOptions" class="payment-options"></div>
+    <div id="wallet" class="wallet-stack hidden">
+      <section class="paper wallet-balance" aria-labelledby="balance-label">
+        <div>
+          <p id="name" class="wallet-name">SheSay user</p>
+          <h1 id="balance-label" class="wallet-label">Wallet balance</h1>
+          <div id="balance" class="amount">$0.00</div>
+          <p class="muted wallet-hint">Use your balance to subscribe, purchase content, and support authors.</p>
+        </div>
+        <button id="refresh" class="button ghost" type="button">Refresh</button>
+      </section>
+
+      <section class="paper wallet-section" aria-labelledby="topup-title">
+        <h2 id="topup-title">Top up</h2>
+        <p class="muted">Pay securely by card with Stripe. The full amount is added to your balance.</p>
+        <div id="topupAmounts" class="topup-amounts" role="radiogroup" aria-label="Top-up amount">
+          <button class="topup-amount" type="button" role="radio" aria-checked="false" data-amount="5">$5</button>
+          <button class="topup-amount" type="button" role="radio" aria-checked="true" data-amount="10">$10</button>
+          <button class="topup-amount" type="button" role="radio" aria-checked="false" data-amount="20">$20</button>
+          <button class="topup-amount" type="button" role="radio" aria-checked="false" data-amount="50">$50</button>
+        </div>
+        <button id="stripeCheckout" class="button topup-pay" type="button">Pay $10 with Stripe</button>
+        <div id="notice" class="notice" aria-live="polite"></div>
         <div class="gift-card">
-          <button id="giftCardToggle" class="button ghost" type="button" aria-expanded="false" aria-controls="giftCardPanel">Redeem a gift card</button>
+          <button id="giftCardToggle" class="link-button" type="button" aria-expanded="false" aria-controls="giftCardPanel">Have a gift card? Redeem it</button>
           <div id="giftCardPanel" class="gift-card-panel hidden">
             <label for="giftCardCode">Gift card code</label>
             <div class="code-row">
@@ -33,33 +48,118 @@
             </div>
           </div>
         </div>
-        <div id="notice" class="notice" aria-live="polite"></div>
-      </div>
-    </section>
+      </section>
+
+      <section class="paper wallet-section" aria-labelledby="history-title">
+        <h2 id="history-title">Top-up history</h2>
+        <ul id="history" class="topup-history" aria-live="polite"></ul>
+        <p id="historyEmpty" class="muted hidden">No top-ups yet.</p>
+        <p id="historyError" class="notice error hidden">Could not load your top-up history. Please refresh and try again.</p>
+        <button id="historyMore" class="button ghost history-more hidden" type="button">Show more</button>
+      </section>
+    </div>
     <section id="login" class="paper wallet-card hidden"><p class="muted">Log in to your SheSay account first.</p><a href="auth.html#login">Log in or sign up</a></section>
-  <nav class="policy-links" aria-label="Policies and support"><a href="index.html">Company</a><a href="app.html">Download</a><a href="terms-of-service.html">Terms</a><a href="privacy-policy.html">Privacy</a><a href="refund-policy.html">Refund policy</a><a href="help-feedback.html">Help &amp; feedback</a></nav></main>
+  <nav class="policy-links" aria-label="Policies and support"><a href="index.html">Company</a><a href="app.html">Download</a><a href="legal.html">All terms &amp; policies</a><a href="terms-of-service.html">Terms of Service</a><a href="author-terms.html">Author Terms of Service</a><a href="privacy-policy.html">Privacy Policy</a><a href="cookie-policy.html">Cookie Policy</a><a href="dmca-notice.html">DMCA Notice</a><a href="child-safety-standards.html">Child Safety Standards</a><a href="data-deletion.html">Account &amp; Data Deletion</a><a href="refund-policy.html">Refund Policy</a><a href="help-feedback.html">Help &amp; feedback</a></nav></main>
   <script src="site.js"></script>
   <script>
     const $ = id => document.getElementById(id);
     const sb = SheSay.client;
-    const escapeHtml = value => { const node = document.createElement('div'); node.textContent = value ?? ''; return node.innerHTML; };
+    const HISTORY_PAGE = 20;
+    const CHANNELS = { stripe: 'Card (Stripe)', gift_card: 'Gift card', google_play: 'Google Play', usdt: 'USDT' };
+    let account = null;
+    let historyLoaded = 0;
+    let topupAmount = 10;
     function notice(message, kind = '') { $('notice').textContent = message; $('notice').className = `notice ${kind}`; }
-    function renderPaymentMethods(methods) {
-      $('paymentOptions').innerHTML = methods.map(method => {
-        const details = [method.network, method.address, method.note].filter(Boolean).join(' · ');
-        return `<button class="payment-option" type="button"><strong>${escapeHtml(method.display_name)}</strong><span>${escapeHtml(details || 'Payment instructions are not configured yet.')}</span></button>`;
-      }).join('');
+    const money = value => '$' + Number(value || 0).toFixed(2);
+    function topupStatus(row) {
+      if (row.order_status === 'refunded' || row.status === 'refunded') return ['Refunded', 'neutral'];
+      if (row.order_status === 'refund_requested') return ['Refund pending', 'pending'];
+      if (row.status === 'completed') return ['Completed', 'success'];
+      if (row.status === 'pending') return ['Pending', 'pending'];
+      if (row.status === 'cancelled') return ['Cancelled', 'neutral'];
+      return ['Failed', 'error'];
     }
-    async function currentUser() {
-      const { data } = await sb.auth.getUser();
-      return data.user;
+    function historyItem(row) {
+      const [label, kind] = topupStatus(row);
+      const item = document.createElement('li');
+      item.className = 'topup-row';
+      item.innerHTML = '<div class="topup-main"><strong></strong><span class="muted"></span></div><div class="topup-side"><strong class="topup-value"></strong><span class="status-pill"></span></div>';
+      const channel = row.recharge_channel || row.payment_method;
+      item.querySelector('.topup-main strong').textContent = CHANNELS[channel] || 'Top-up';
+      const when = new Date(row.created_at).toLocaleString(undefined, { dateStyle: 'medium', timeStyle: 'short' });
+      item.querySelector('.topup-main span').textContent = [when, row.transaction_no].filter(Boolean).join(' · ');
+      item.querySelector('.topup-value').textContent = '+' + money(row.amount);
+      const pill = item.querySelector('.status-pill');
+      pill.textContent = label;
+      pill.classList.add(kind);
+      return item;
     }
-    async function refreshBalance(user) {
-      const account = user || await currentUser();
+    async function loadHistory(reset = true) {
+      if (!account) return [];
+      if (reset) historyLoaded = 0;
+      const { data, error } = await sb.from('wallet_transactions')
+        .select('id,amount,status,order_status,payment_method,recharge_channel,transaction_no,external_order_id,created_at')
+        .eq('user_id', account.id)
+        .eq('type', 'recharge')
+        .order('created_at', { ascending: false })
+        .range(historyLoaded, historyLoaded + HISTORY_PAGE - 1);
+      $('historyError').classList.toggle('hidden', !error);
+      if (error) return [];
+      if (reset) $('history').replaceChildren();
+      data.forEach(row => $('history').append(historyItem(row)));
+      historyLoaded += data.length;
+      $('historyEmpty').classList.toggle('hidden', historyLoaded > 0);
+      $('historyMore').classList.toggle('hidden', data.length < HISTORY_PAGE);
+      return data;
+    }
+    async function refreshBalance() {
       if (!account) return null;
       const { data, error } = await sb.from('wallets').select('balance').eq('user_id', account.id).maybeSingle();
-      $('balance').textContent = '$' + Number(data?.balance || 0).toFixed(2);
+      $('balance').textContent = money(data?.balance);
       return error;
+    }
+    function selectAmount(button) {
+      topupAmount = Number(button.dataset.amount);
+      document.querySelectorAll('.topup-amount').forEach(other => other.setAttribute('aria-checked', String(other === button)));
+      $('stripeCheckout').textContent = `Pay $${topupAmount} with Stripe`;
+    }
+    async function startCheckout() {
+      const button = $('stripeCheckout');
+      button.disabled = true;
+      notice('Opening secure Stripe checkout…');
+      try {
+        const { data, error } = await sb.functions.invoke('stripe-checkout', { body: { amountUsd: topupAmount } });
+        if (error) {
+          const body = await Promise.resolve(error.context?.json?.()).catch(() => null);
+          throw new Error(body?.error || 'Could not start the payment. Please try again.');
+        }
+        location.assign(data.url);
+      } catch (error) {
+        notice(error.message, 'error');
+        button.disabled = false;
+      }
+    }
+    // Stripe confirms payment by webhook, so the return page waits for the top-up to settle.
+    async function followCheckoutReturn() {
+      const params = new URLSearchParams(location.search);
+      const result = params.get('topup');
+      if (!result) return;
+      history.replaceState(null, '', location.pathname);
+      if (result === 'cancelled') { notice('Payment cancelled. No money was taken.'); return; }
+      const sessionId = params.get('session_id');
+      notice('Payment received. Waiting for confirmation from Stripe…');
+      for (let attempt = 0; attempt < 10; attempt++) {
+        const rows = await loadHistory();
+        const row = rows.find(item => item.external_order_id === sessionId);
+        if (row && row.status !== 'pending') {
+          await refreshBalance();
+          const [label] = topupStatus(row);
+          notice(row.status === 'completed' ? `Top-up completed. ${money(row.amount)} was added to your balance.` : `Top-up ${label.toLowerCase()}.`, row.status === 'completed' ? 'success' : 'error');
+          return;
+        }
+        await new Promise(resolve => setTimeout(resolve, 3000));
+      }
+      notice('Your payment is still being confirmed. It will appear as Completed in your history shortly.');
     }
     function setGiftCardPanel(open) {
       $('giftCardPanel').classList.toggle('hidden', !open);
@@ -85,8 +185,8 @@
         if (error) throw error;
         const credited = Number(data || 0);
         $('giftCardCode').value = '';
-        notice(`Gift card redeemed. $${credited.toFixed(2)} was added to your balance.`, 'success');
-        await refreshBalance();
+        notice(`Gift card redeemed. ${money(credited)} was added to your balance.`, 'success');
+        await Promise.all([refreshBalance(), loadHistory()]);
       } catch (error) {
         notice(giftCardMessage(error), 'error');
       } finally {
@@ -95,25 +195,29 @@
     }
     async function load() {
       const { data: { user } } = await sb.auth.getUser();
+      account = user;
       $('loading').classList.add('hidden');
       if (!user) { $('login').classList.remove('hidden'); return; }
       $('wallet').classList.remove('hidden');
+      $('logout').classList.remove('hidden');
       $('name').textContent = user.user_metadata?.nickname || user.email || 'SheSay user';
-      const balanceError = await refreshBalance(user);
+      const [balanceError] = await Promise.all([refreshBalance(), loadHistory()]);
       if (balanceError) notice('Could not load your balance. Please refresh and try again.', 'error');
-      const methods = await sb.from('payment_methods').select('id,method,display_name,network,address,note').eq('method', 'usdt').order('sort_order').order('id');
-      if (methods.error) notice('Could not load payment instructions. Please refresh and try again.', 'error');
-      else renderPaymentMethods(methods.data || []);
     }
-    $('refresh').onclick = load;
+    $('refresh').onclick = () => Promise.all([refreshBalance(), loadHistory()]);
+    $('historyMore').onclick = () => loadHistory(false);
     $('logout').onclick = async () => { await sb.auth.signOut(); location.replace('auth.html#login'); };
+    document.querySelectorAll('.topup-amount').forEach(button => { button.onclick = () => selectAmount(button); });
+    $('stripeCheckout').onclick = startCheckout;
     $('giftCardToggle').onclick = () => setGiftCardPanel($('giftCardPanel').classList.contains('hidden'));
     $('giftCardRedeem').onclick = redeemGiftCard;
     $('giftCardCode').addEventListener('keydown', event => {
       if (event.key === 'Enter') { event.preventDefault(); redeemGiftCard(); }
     });
 
-    load();
+    load().then(followCheckoutReturn);
+    // Returning from Stripe with the back button can restore a disabled pay button from cache.
+    addEventListener('pageshow', event => { if (event.persisted) $('stripeCheckout').disabled = false; });
   </script>
 </body>
 </html>
