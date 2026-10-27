@@ -16,10 +16,11 @@ for (const file of htmlFiles) {
     const body = m[2] || '';
     const srcMatch = /\bsrc\s*=\s*"([^"]+)"/.exec(attrs);
     if (srcMatch) {
-      const local = srcMatch[1];
+      const source = srcMatch[1];
+      const local = source.split(/[?#]/, 1)[0];
       if (/^(https?:|\.\.?\/|\/)/.test(local)) continue;
       const p = path.join(dir, local);
-      if (!fs.existsSync(p)) { console.error(`${file}: missing local script ${local}`); failures++; }
+      if (!fs.existsSync(p)) { console.error(`${file}: missing local script ${source}`); failures++; }
       continue;
     }
     if (!body.trim()) continue;
