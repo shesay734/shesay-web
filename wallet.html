@@ -21,22 +21,23 @@
         <div>
           <p id="name" class="wallet-name">SheSay user</p>
           <h1 id="balance-label" class="wallet-label">Wallet balance</h1>
-          <div id="balance" class="amount">$0.00</div>
-          <p class="muted wallet-hint">Use your balance to subscribe, purchase content, and support authors.</p>
+          <div id="balance" class="amount">0 credits</div>
+          <p id="balanceUsd" class="wallet-usd">≈ $0.00</p>
+          <p class="muted wallet-hint">Use your credits to subscribe, purchase content, and support authors.</p>
         </div>
         <button id="refresh" class="button ghost" type="button">Refresh</button>
       </section>
 
       <section class="paper wallet-section" aria-labelledby="topup-title">
         <h2 id="topup-title">Top up</h2>
-        <p class="muted">Pay securely by card with Stripe. The full amount is added to your balance.</p>
+        <p class="muted">Pay securely by card with Stripe. <strong class="rate">Every $1 = 10 credits</strong>, so $5 gets you 50 credits.</p>
         <div id="topupAmounts" class="topup-amounts" role="radiogroup" aria-label="Top-up amount">
-          <button class="topup-amount" type="button" role="radio" aria-checked="false" data-amount="5">$5</button>
-          <button class="topup-amount" type="button" role="radio" aria-checked="true" data-amount="10">$10</button>
-          <button class="topup-amount" type="button" role="radio" aria-checked="false" data-amount="20">$20</button>
-          <button class="topup-amount" type="button" role="radio" aria-checked="false" data-amount="50">$50</button>
+          <button class="topup-amount" type="button" role="radio" aria-checked="false" data-amount="5"><strong>50 credits</strong><span>$5</span></button>
+          <button class="topup-amount" type="button" role="radio" aria-checked="true" data-amount="10"><strong>100 credits</strong><span>$10</span></button>
+          <button class="topup-amount" type="button" role="radio" aria-checked="false" data-amount="20"><strong>200 credits</strong><span>$20</span></button>
+          <button class="topup-amount" type="button" role="radio" aria-checked="false" data-amount="50"><strong>500 credits</strong><span>$50</span></button>
         </div>
-        <button id="stripeCheckout" class="button topup-pay" type="button">Pay $10 with Stripe</button>
+        <button id="stripeCheckout" class="button topup-pay" type="button">Pay $10 with Stripe · get 100 credits</button>
         <div id="notice" class="notice" aria-live="polite"></div>
         <div class="gift-card">
           <button id="giftCardToggle" class="link-button" type="button" aria-expanded="false" aria-controls="giftCardPanel">Have a gift card? Redeem it</button>
@@ -70,7 +71,10 @@
     let historyLoaded = 0;
     let topupAmount = 10;
     function notice(message, kind = '') { $('notice').textContent = message; $('notice').className = `notice ${kind}`; }
+    const CREDITS_PER_USD = 10;
     const money = value => '$' + Number(value || 0).toFixed(2);
+    // Balances are stored in USD; the app shows them as credits with trailing zeros trimmed.
+    const credits = usd => Number((Number(usd || 0) * CREDITS_PER_USD).toFixed(6)).toLocaleString('en-US', { maximumFractionDigits: 6 }) + ' credits';
     function topupStatus(row) {
       if (row.order_status === 'refunded' || row.status === 'refunded') return ['Refunded', 'neutral'];
       if (row.order_status === 'refund_requested') return ['Refund pending', 'pending'];
@@ -83,12 +87,13 @@
       const [label, kind] = topupStatus(row);
       const item = document.createElement('li');
       item.className = 'topup-row';
-      item.innerHTML = '<div class="topup-main"><strong></strong><span class="muted"></span></div><div class="topup-side"><strong class="topup-value"></strong><span class="status-pill"></span></div>';
+      item.innerHTML = '<div class="topup-main"><strong></strong><span class="muted"></span></div><div class="topup-side"><strong class="topup-value"></strong><span class="topup-usd muted"></span><span class="status-pill"></span></div>';
       const channel = row.recharge_channel || row.payment_method;
       item.querySelector('.topup-main strong').textContent = CHANNELS[channel] || 'Top-up';
       const when = new Date(row.created_at).toLocaleString(undefined, { dateStyle: 'medium', timeStyle: 'short' });
       item.querySelector('.topup-main span').textContent = [when, row.transaction_no].filter(Boolean).join(' · ');
-      item.querySelector('.topup-value').textContent = '+' + money(row.amount);
+      item.querySelector('.topup-value').textContent = '+' + credits(row.amount);
+      item.querySelector('.topup-usd').textContent = money(row.amount);
       const pill = item.querySelector('.status-pill');
       pill.textContent = label;
       pill.classList.add(kind);
@@ -115,13 +120,14 @@
     async function refreshBalance() {
       if (!account) return null;
       const { data, error } = await sb.from('wallets').select('balance').eq('user_id', account.id).maybeSingle();
-      $('balance').textContent = money(data?.balance);
+      $('balance').textContent = credits(data?.balance);
+      $('balanceUsd').textContent = '≈ ' + money(data?.balance);
       return error;
     }
     function selectAmount(button) {
       topupAmount = Number(button.dataset.amount);
       document.querySelectorAll('.topup-amount').forEach(other => other.setAttribute('aria-checked', String(other === button)));
-      $('stripeCheckout').textContent = `Pay $${topupAmount} with Stripe`;
+      $('stripeCheckout').textContent = `Pay $${topupAmount} with Stripe · get ${credits(topupAmount)}`;
     }
     async function startCheckout() {
       const button = $('stripeCheckout');
@@ -154,7 +160,7 @@
         if (row && row.status !== 'pending') {
           await refreshBalance();
           const [label] = topupStatus(row);
-          notice(row.status === 'completed' ? `Top-up completed. ${money(row.amount)} was added to your balance.` : `Top-up ${label.toLowerCase()}.`, row.status === 'completed' ? 'success' : 'error');
+          notice(row.status === 'completed' ? `Top-up completed. ${credits(row.amount)} (${money(row.amount)}) added to your balance.` : `Top-up ${label.toLowerCase()}.`, row.status === 'completed' ? 'success' : 'error');
           return;
         }
         await new Promise(resolve => setTimeout(resolve, 3000));
@@ -185,7 +191,7 @@
         if (error) throw error;
         const credited = Number(data || 0);
         $('giftCardCode').value = '';
-        notice(`Gift card redeemed. ${money(credited)} was added to your balance.`, 'success');
+        notice(`Gift card redeemed. ${credits(credited)} (${money(credited)}) added to your balance.`, 'success');
         await Promise.all([refreshBalance(), loadHistory()]);
       } catch (error) {
         notice(giftCardMessage(error), 'error');
