@@ -304,3 +304,9 @@ a:focus-visible,button:focus-visible,textarea:focus-visible { outline:3px solid 
 @media (max-width:760px) {
   .corporate-footer-links { justify-content:flex-start; }
 }
+
+/* Public language selector */
+.site-language { display:inline-flex; align-items:center; gap:5px; margin-left:auto; color:#76627d; font-size:12px; font-weight:650; white-space:nowrap; }
+.site-language select { min-height:34px; padding:0 24px 0 9px; border:1px solid #e5dbe8; border-radius:999px; background:#fff; color:#4d2b5a; font:inherit; cursor:pointer; }
+.site-language select:focus-visible { outline:3px solid #cba7d6; outline-offset:2px; }
+@media (max-width:760px) { .site-language { margin-left:0; } .corporate-header .site-language { order:3; width:100%; justify-content:flex-end; } }
