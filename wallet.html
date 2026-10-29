@@ -28,16 +28,16 @@
         <button id="refresh" class="button ghost" type="button">Refresh</button>
       </section>
 
-      <p class="refund-note" role="note"><strong>Payment processing fees are non-refundable.</strong> This applies even if SheSay covered these fees when you topped up, so a refund may be approximately 5% less than the original top-up amount. <a href="refund-policy.html#processing-fees">Refund policy</a></p>
+      <p class="refund-note" role="note"><strong>Payment processing fees are charged by third-party payment platforms and therefore cannot be refunded.</strong> This applies even if SheSay covered these fees when you topped up, so a refund may be approximately 5% less than the original top-up amount. <a href="refund-policy.html#processing-fees">Refund policy</a></p>
 
       <section class="paper wallet-section" aria-labelledby="topup-title">
         <h2 id="topup-title">Top up</h2>
         <p class="muted">Pay securely by card with Stripe. <strong class="rate">Every $1 = 10 credits</strong>, so $5 gets you 50 credits.</p>
         <div id="topupAmounts" class="topup-amounts" role="radiogroup" aria-label="Top-up amount">
-          <button class="topup-amount" type="button" role="radio" aria-checked="false" data-amount="5"><strong>50 credits</strong><span>$5</span></button>
-          <button class="topup-amount" type="button" role="radio" aria-checked="true" data-amount="10"><strong>100 credits</strong><span>$10</span></button>
-          <button class="topup-amount" type="button" role="radio" aria-checked="false" data-amount="20"><strong>200 credits</strong><span>$20</span></button>
-          <button class="topup-amount" type="button" role="radio" aria-checked="false" data-amount="50"><strong>500 credits</strong><span>$50</span></button>
+          <button class="topup-amount" type="button" role="radio" aria-checked="false" data-amount="5"><strong>50 credits</strong><span>$5</span><small class="topup-promo hidden"></small></button>
+          <button class="topup-amount" type="button" role="radio" aria-checked="true" data-amount="10"><strong>100 credits</strong><span>$10</span><small class="topup-promo hidden"></small></button>
+          <button class="topup-amount" type="button" role="radio" aria-checked="false" data-amount="20"><strong>200 credits</strong><span>$20</span><small class="topup-promo hidden"></small></button>
+          <button class="topup-amount" type="button" role="radio" aria-checked="false" data-amount="50"><strong>500 credits</strong><span>$50</span><small class="topup-promo hidden"></small></button>
         </div>
         <button id="stripeCheckout" class="button topup-pay" type="button">Pay $10 with Stripe · get 100 credits</button>
         <div id="notice" class="notice" aria-live="polite"></div>
@@ -72,11 +72,42 @@
     let account = null;
     let historyLoaded = 0;
     let topupAmount = 10;
+    const topupPromotions = new Map();
     function notice(message, kind = '') { $('notice').textContent = message; $('notice').className = `notice ${kind}`; }
     const CREDITS_PER_USD = 10;
     const money = value => '$' + Number(value || 0).toFixed(2);
     // Balances are stored in USD; the app shows them as credits with trailing zeros trimmed.
     const credits = usd => Number((Number(usd || 0) * CREDITS_PER_USD).toFixed(6)).toLocaleString('en-US', { maximumFractionDigits: 6 }) + ' credits';
+    const topupPoints = amount => Number(amount || 0) * CREDITS_PER_USD;
+    function selectedTopupPoints(amount) {
+      const promo = topupPromotions.get(Number(amount));
+      return topupPoints(amount) + (promo?.bonus_points || 0);
+    }
+    function renderTopupPromotions() {
+      document.querySelectorAll('.topup-amount').forEach(button => {
+        const amount = Number(button.dataset.amount);
+        const promo = topupPromotions.get(amount);
+        // The card shows the package's base credits; the bonus line adds to it.
+        button.querySelector('strong').textContent = `${topupPoints(amount).toLocaleString('en-US')} credits`;
+        const promoNode = button.querySelector('.topup-promo');
+        promoNode.textContent = promo ? `+${promo.bonus_points} bonus · ${promo.label}` : '';
+        promoNode.classList.toggle('hidden', !promo);
+      });
+      selectAmount(document.querySelector(`.topup-amount[data-amount="${topupAmount}"]`));
+    }
+    async function loadTopupPromotions() {
+      const { data, error } = await sb.rpc('get_active_top_up_promotions', { target_surface: 'web' });
+      if (error) return;
+      topupPromotions.clear();
+      (data || []).forEach(promo => {
+        const amount = Number(promo.amount_usd);
+        const bonus = Number(promo.bonus_points);
+        if (Number.isFinite(amount) && Number.isFinite(bonus) && bonus > 0 && !topupPromotions.has(amount)) {
+          topupPromotions.set(amount, { label: promo.label || 'Promotion', bonus_points: bonus });
+        }
+      });
+      renderTopupPromotions();
+    }
     function topupStatus(row) {
       if (row.order_status === 'refunded' || row.status === 'refunded') return ['Refunded', 'neutral'];
       if (row.order_status === 'refund_requested') return ['Refund pending', 'pending'];
@@ -129,7 +160,11 @@
     function selectAmount(button) {
       topupAmount = Number(button.dataset.amount);
       document.querySelectorAll('.topup-amount').forEach(other => other.setAttribute('aria-checked', String(other === button)));
-      $('stripeCheckout').textContent = `Pay $${topupAmount} with Stripe · get ${credits(topupAmount)}`;
+      const promo = topupPromotions.get(topupAmount);
+      const offer = `${selectedTopupPoints(topupAmount).toLocaleString('en-US')} credits`;
+      $('stripeCheckout').textContent = promo
+        ? `Pay $${topupAmount} with Stripe · get ${offer} (${topupPoints(topupAmount).toLocaleString('en-US')} + ${promo.bonus_points} bonus)`
+        : `Pay $${topupAmount} with Stripe · get ${offer}`;
     }
     async function startCheckout() {
       const button = $('stripeCheckout');
@@ -209,10 +244,10 @@
       $('wallet').classList.remove('hidden');
       $('logout').classList.remove('hidden');
       $('name').textContent = user.user_metadata?.nickname || user.email || 'SheSay user';
-      const [balanceError] = await Promise.all([refreshBalance(), loadHistory()]);
+      const [balanceError] = await Promise.all([refreshBalance(), loadHistory(), loadTopupPromotions()]);
       if (balanceError) notice('Could not load your balance. Please refresh and try again.', 'error');
     }
-    $('refresh').onclick = () => Promise.all([refreshBalance(), loadHistory()]);
+    $('refresh').onclick = () => Promise.all([refreshBalance(), loadHistory(), loadTopupPromotions()]);
     $('historyMore').onclick = () => loadHistory(false);
     $('logout').onclick = async () => { await sb.auth.signOut(); location.replace('auth.html#login'); };
     document.querySelectorAll('.topup-amount').forEach(button => { button.onclick = () => selectAmount(button); });
