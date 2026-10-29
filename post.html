@@ -8,27 +8,24 @@
   <title>SheSay post</title>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <link rel="stylesheet" href="site.css">
-  <style>
-    .shared-post{padding:clamp(26px,6vw,55px)}
-    .shared-post .meta{color:var(--muted);font:13px/1.6 ui-rounded,"PingFang SC",sans-serif}
-    .shared-post .body{margin-top:28px;white-space:pre-wrap;line-height:2;overflow-wrap:anywhere}
-    .shared-post .body-image{display:block;max-width:100%;height:auto;margin:12px 0;border-radius:12px}
-    .post-error{padding:45px 0;text-align:center;color:#a52c54}
-    .updates{margin-top:38px}.updates h2{font-size:18px}.update{padding:18px 0;border-top:1px solid var(--line)}
-    .gate{margin-top:24px;padding:20px;border:1px solid var(--line);border-radius:14px;background:#faf8fb;text-align:center}
-    .gate strong,.gate span{display:block}.gate span{margin:6px 0 14px;color:var(--muted);font-size:14px}
-    .post-actions{display:flex;justify-content:center;gap:8px;flex-wrap:wrap}
-  </style>
+  <link rel="stylesheet" href="share.css">
 </head>
-<body>
-  <main class="site-shell">
+<body class="share-page share-post">
+  <main class="share-shell">
+    <a class="share-skip" href="#share-content">Skip to content</a>
+    <header class="share-header">
+      <a class="share-brand" href="app.html"><img src="app-icon.png" alt="" width="40" height="40"><span>SheSay<small>Stories. Connections. Community.</small></span></a>
+      <a class="share-explore" href="app.html">Discover SheSay <span aria-hidden="true">↗</span></a>
+    </header>
+    <div id="share-content" tabindex="-1"></div>
     <header id="login-card" class="home-header shared-login hidden">
-      <a class="home-brand" href="index.html"><img src="app-icon.png" alt="">SheSay</a>
+      <span class="share-account-label">Your stories, all in one place.</span>
       <nav class="home-auth" aria-label="Account"><a id="login-link">Log in</a><a id="register-link" class="home-register">Register</a></nav>
     </header>
-    <article id="post" class="paper shared-post"><p class="eyebrow">SHE SAY · SHARED POST</p><div class="meta">Loading…</div></article>
+    <article id="post" class="paper shared-post"><p class="eyebrow">SHARED STORY</p><div class="share-loading" role="status">Loading story…</div></article>
     <div id="notice" class="notice" aria-live="polite"></div>
-    <footer class="site-footer"><a href="index.html">Visit SheSay &gt;</a></footer>
+    <aside class="share-discover" aria-label="Discover SheSay"><img src="app-icon.png" alt="" width="44" height="44"><div><strong>A little closer to your community.</strong><p>Discover more stories and conversations on SheSay.</p></div><a href="app.html">Explore the app <span aria-hidden="true">↗</span></a></aside>
+    <footer class="share-footer"><span>Shared on SheSay</span><nav aria-label="Footer"><a href="help-feedback.html">Help</a><a href="privacy-policy.html">Privacy</a><a href="terms-of-service.html">Terms</a></nav></footer>
   </main>
   <script src="site.js"></script>
   <script src="open-app.js"></script>
@@ -93,7 +90,7 @@
     function render(row) {
       shared = row;
       document.title = `${row.title || 'Post'} · SheSay`;
-      let html = `<p class="eyebrow">SHE SAY · SHARED POST</p><div class="meta">${escapeHtml(row.author_name || 'SheSay user')}</div>${row.title ? `<h1>${escapeHtml(row.title)}</h1>` : ''}`;
+      let html = `<p class="eyebrow">SHARED STORY</p><div class="meta share-author">${escapeHtml(row.author_name || 'SheSay user')}</div>${row.title ? `<h1>${escapeHtml(row.title)}</h1>` : ''}`;
       if (row.locked) {
         html += gateHtml(row.scope, row.price, row.group_code, row.id);
       } else {
@@ -113,7 +110,7 @@
       const appLink = document.createElement('a');
       appLink.className = 'button open-app';
       appLink.href = `shesay://post?id=${encodeURIComponent(row.id)}`;
-      appLink.textContent = 'Open in App';
+      appLink.textContent = 'Continue in SheSay';
       el.appendChild(appLink);
       bindPurchaseButtons();
     }
