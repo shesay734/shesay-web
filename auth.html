@@ -7,7 +7,7 @@
   <meta name="theme-color" content="#a765c5">
   <title>Log in or sign up · SheSay</title>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <link rel="stylesheet" href="site.css?v=turnstile-1">
+  <link rel="stylesheet" href="site.css?v=turnstile-2">
 </head>
 <body>
   <main class="auth-stage">
@@ -40,7 +40,10 @@
           <input id="password" type="password" autocomplete="current-password" required minlength="6" maxlength="16" placeholder="6–16 characters, no spaces">
         </div>
 
-        <div id="captcha" class="captcha-wrap" role="group" aria-label="Human verification"></div>
+        <div id="captchaArea" class="captcha-area">
+          <button id="verifyHuman" class="button ghost" type="button">Verify you're human</button>
+          <div id="captcha" class="captcha-wrap" role="group" aria-label="Human verification"></div>
+        </div>
 
         <div id="verifyFields" class="hidden">
           <label for="code">Email verification code</label>
@@ -83,8 +86,8 @@
       : 'login';
     let challengeId = null;
     let captchaWidget = null;
-    let captchaSize = null;
     let captchaToken = '';
+    let resendIn = 0;
     let verifiedSession = null;
 
     function setPressed(id, pressed) {
@@ -101,47 +104,70 @@
       if (nickname.length < 2 || nickname.length > 10) throw new Error('Nickname must be 2–10 characters.');
       if (password.length < 6 || password.length > 16 || /\s/.test(password)) throw new Error('Password must be 6–16 characters with no spaces.');
     }
+    // The check starts only when the user clicks "Verify you're human", and
+    // Turnstile never refreshes it on its own. A token is single-use, so it is
+    // dropped once a request has used it.
     function renderCaptcha() {
-      if (!window.turnstile || captchaWidget !== null) return;
-      captchaSize = $('captcha').clientWidth < 300 ? 'compact' : 'normal';
+      if (captchaWidget !== null) return;
+      if (!window.turnstile) {
+        showNotice('Human verification is still loading. Try again in a moment, or reload this page.', 'error');
+        return;
+      }
       captchaWidget = window.turnstile.render('#captcha', {
         sitekey: '0x4AAAAAAFiIwYxQwNiepNxZ',
-        size: captchaSize,
-        callback: token => { captchaToken = token; },
-        'expired-callback': () => { captchaToken = ''; },
-        'timeout-callback': () => { captchaToken = ''; },
+        size: $('captchaArea').clientWidth < 300 ? 'compact' : 'normal',
+        'refresh-expired': 'manual',
+        'refresh-timeout': 'manual',
+        callback: token => { captchaToken = token; updateGates(); },
+        'expired-callback': () => resetCaptcha(),
+        'timeout-callback': () => resetCaptcha(),
         'error-callback': () => {
-          captchaToken = '';
-          showNotice('Human verification could not load. Check your connection and reload this page.', 'error');
+          resetCaptcha();
+          showNotice('Human verification could not load. Check your connection and try again.', 'error');
         },
         theme: 'light',
       });
+      updateGates();
     }
     function resetCaptcha() {
       captchaToken = '';
-      if (captchaWidget !== null && window.turnstile) window.turnstile.reset(captchaWidget);
+      if (captchaWidget !== null && window.turnstile) window.turnstile.remove(captchaWidget);
+      captchaWidget = null;
+      updateGates();
     }
     function takeCaptchaToken() {
       if (!captchaToken) throw new Error('Complete the human verification first.');
       const token = captchaToken;
-      captchaToken = '';
+      resetCaptcha();
       return token;
     }
-    window.onTurnstileLoaded = renderCaptcha;
+    // Send code and password login stay disabled until the check has passed.
+    function updateGates() {
+      const verified = Boolean(captchaToken);
+      const waiting = resendIn > 0;
+      $('verifyHuman').classList.toggle('hidden', captchaWidget !== null);
+      // While a sent code is in its resend wait, no new check is needed yet.
+      $('captchaArea').classList.toggle('hidden',
+        waiting && captchaWidget === null && $('existingChoice').classList.contains('hidden'));
+      $('sendCode').disabled = !verified || waiting;
+      $('sendCode').textContent = waiting ? `Resend in ${resendIn}s` : 'Send code';
+      $('submit').disabled = mode === 'login' && !verified;
+    }
+    function startResendWait() {
+      resendIn = 60;
+      const tick = () => {
+        resendIn -= 1;
+        updateGates();
+        if (resendIn > 0) setTimeout(tick, 1000);
+      };
+      updateGates();
+      setTimeout(tick, 1000);
+    }
+    $('verifyHuman').onclick = renderCaptcha;
     window.onTurnstileLoadError = () => {
-      captchaToken = '';
+      resetCaptcha();
       showNotice('Human verification could not load. Check your connection and reload this page.', 'error');
     };
-    if (window.ResizeObserver) {
-      new ResizeObserver(() => {
-        const size = $('captcha').clientWidth < 300 ? 'compact' : 'normal';
-        if (captchaWidget === null || size === captchaSize) return;
-        captchaToken = '';
-        window.turnstile.remove(captchaWidget);
-        captchaWidget = null;
-        renderCaptcha();
-      }).observe($('captcha'));
-    }
 
     function render() {
       const registering = mode === 'register';
@@ -176,13 +202,12 @@
         : (returnTo.includes('help-feedback.html') ? 'Log in and contact support' : 'Log in and open wallet');
       $('existingChoice').classList.add('hidden');
       showNotice();
-      setTimeout(renderCaptcha, 0);
+      updateGates();
     }
     function setMode(nextMode) {
       mode = nextMode;
       challengeId = null;
       verifiedSession = null;
-      resetCaptcha();
       history.replaceState(
         null,
         '',
@@ -217,6 +242,7 @@
       const result = await SheSay.fusion('resolveEmailRegistration', { challengeId }, verifiedSession.access_token);
       if (result.existingAccount) {
         $('existingChoice').classList.remove('hidden');
+        updateGates();
         showNotice('Email verified. Choose how to handle the existing account.', 'success');
         return;
       }
@@ -228,17 +254,14 @@
       if (!/^\S+@\S+\.\S+$/.test(email)) throw new Error('Enter a valid email address.');
       if (mode === 'register') registrationValuesValid();
       const token = takeCaptchaToken();
-      try {
-        const started = mode === 'register'
-          ? await SheSay.fusion('startEmailRegistration', { email })
-          : null;
-        const { error } = await sb.auth.signInWithOtp({ email, options: { captchaToken: token } });
-        if (error) throw error;
-        challengeId = started?.challengeId ?? null;
-        showNotice('Verification code sent. Check your email.', 'success');
-      } finally {
-        resetCaptcha();
-      }
+      const started = mode === 'register'
+        ? await SheSay.fusion('startEmailRegistration', { email })
+        : null;
+      const { error } = await sb.auth.signInWithOtp({ email, options: { captchaToken: token } });
+      if (error) throw error;
+      challengeId = started?.challengeId ?? null;
+      startResendWait();
+      showNotice('Verification code sent. Check your email.', 'success');
     }
     async function verifyOtpLogin() {
       const email = $('email').value.trim();
@@ -255,7 +278,7 @@
     $('sendCode').onclick = async () => {
       const button = $('sendCode'); button.disabled = true;
       try { await sendCode(); } catch (error) { showNotice(error.message || 'Could not send verification code.', 'error'); }
-      finally { button.disabled = false; }
+      finally { updateGates(); }
     };
     $('form').onsubmit = async event => {
       event.preventDefault();
@@ -276,12 +299,11 @@
           await verifyRegistration();
         }
       } catch (error) {
-        if (mode !== 'login') resetCaptcha();
         showNotice(error.message || 'Something went wrong. Please complete the verification again and retry.', 'error');
       }
       finally {
-        if (mode === 'login') resetCaptcha();
         button.disabled = false;
+        updateGates();
       }
     };
     $('keepAccount').onclick = () => location.replace(returnTo);
@@ -307,10 +329,10 @@
       } catch (error) {
         showNotice(error.message || 'Could not create the new account. Please complete the verification again and retry.', 'error');
       }
-      finally { resetCaptcha(); button.disabled = false; }
+      finally { button.disabled = false; }
     };
     render();
   </script>
-  <script src="https://challenges.cloudflare.com/turnstile/v0/api.js?onload=onTurnstileLoaded&amp;render=explicit" async defer onerror="onTurnstileLoadError()"></script>
+  <script src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit" async defer onerror="onTurnstileLoadError()"></script>
 </body>
 </html>
