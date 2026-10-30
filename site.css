@@ -377,3 +377,55 @@ label { font-size:13px; font-weight:500; color:var(--muted); }
   .auth-stage { width:calc(100% - 32px); margin:16px auto; }
   .auth-card { padding:8px 0; border:0; border-radius:0; }
 }
+.captcha-verified { display:flex; align-items:center; gap:10px; min-height:65px; margin-top:14px; padding:0 14px; border:1px solid #e0e0e0; border-radius:4px; background:#fafafa; font-size:14px; }
+.captcha-verified span { display:inline-flex; align-items:center; justify-content:center; width:24px; height:24px; border-radius:50%; background:#2e9e5b; color:#fff; font-size:14px; }
+
+/* ===== Icon palette =====
+   Colours taken from the app icon: a violet radial gradient (#cd82fb centre
+   to #a04af7 edge) with the dark plum microphone (#211a28). Shapes stay the
+   app's (pills, underline fields, flat cards); colour adds the energy. */
+:root {
+  --violet: #a24af9; --violet-deep: #8a2fe6; --violet-light: #cd82fb; --violet-soft: #f6eefe;
+  --plum: #211a28; --ink: var(--plum); --app-purple: var(--violet);
+  --icon-gradient: radial-gradient(circle at 38% 34%, #cd82fb 0%, #b766fa 45%, #a04af7 100%);
+}
+body, h1, h2, h3, .hero h1 { color:var(--plum); }
+a, a:hover { color:var(--violet-deep); }
+.policy-links a, .corporate-footer a, .site-footer a { color:#5c5266; }
+.policy-links a:hover, .corporate-footer a:hover, .site-footer a:hover { color:var(--violet-deep); }
+.company-home h1 em, .company-home h2 em, .corporate-page h1 em, .corporate-page h2 em {
+  background:linear-gradient(100deg, #a04af7, #cd82fb); -webkit-background-clip:text; background-clip:text; color:transparent;
+}
+.eyebrow, .brand, .corporate-kicker, .corporate-section-label, .app-eyebrow { color:var(--violet-deep); }
+
+.button, .download-btn, .corporate-button, .corporate-nav-cta {
+  border:0; background:var(--icon-gradient); color:#fff;
+}
+.button:hover, .download-btn:hover, .corporate-button:hover, .corporate-nav-cta:hover {
+  background:var(--icon-gradient); filter:brightness(1.06); color:#fff;
+}
+.button.ghost, .auth-btn, .corporate-button-light { border:1px solid var(--violet); background:#fff; color:var(--violet-deep); }
+.button.ghost:hover, .auth-btn:hover, .corporate-button-light:hover { background:var(--violet-soft); color:var(--violet-deep); }
+.button:disabled, .button[disabled] { background:#ece6f1; color:#a99bb5; filter:none; }
+
+input:not([type=checkbox]):not([type=radio]):focus, textarea:focus, select:focus { border-bottom-color:var(--violet); }
+.tabs button.active { border-bottom-color:var(--violet); color:var(--plum); }
+.auth-method-switch .button.ghost { border:0; background:#f1edf4; color:var(--plum); }
+.auth-method-switch .button.ghost:hover { background:var(--violet-soft); }
+.auth-method-switch .button.ghost.active { background:var(--icon-gradient); color:#fff; }
+
+/* Hero and call-to-action pick up the icon's gradient. */
+.company-blob { background:var(--icon-gradient); opacity:.95; }
+.company-photo { background:linear-gradient(135deg, #f1e3fe, #e2c6fd); }
+.company-cta, .hero { background:var(--icon-gradient); color:#fff; }
+.company-cta h2, .company-cta p, .hero h1, .hero .tagline { color:#fff; }
+.company-cta .corporate-button, .company-cta .button { background:#fff; color:var(--violet-deep); }
+.company-cta a:not(.button):not(.corporate-button) { color:#fff; }
+
+/* Icon tiles, cards and the account panel. */
+.company-icon, .feature-icon { background:var(--violet-soft); color:var(--violet-deep); }
+.company-tile:hover, .legal-card:hover, .value-card:hover { border-color:var(--violet-light); }
+.wallet-balance { background:linear-gradient(135deg, var(--violet-soft), #fff 75%); }
+.company-pill, .story-tag { background:var(--violet-soft); color:var(--violet-deep); }
+.button, .download-btn, .corporate-button, .corporate-nav-cta, .button.ghost, .auth-btn, .corporate-button-light { line-height:1.2; }
+.auth-stage > .site-language { display:flex; justify-content:flex-end; margin:0 0 8px; }

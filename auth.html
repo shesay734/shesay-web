@@ -7,7 +7,7 @@
   <meta name="theme-color" content="#111111">
   <title>Log in or sign up · SheSay</title>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <link rel="stylesheet" href="site.css?v=app-style-1">
+  <link rel="stylesheet" href="site.css?v=icon-palette-1">
 </head>
 <body>
   <main class="auth-stage">
@@ -42,6 +42,7 @@
 
         <div id="captchaArea" class="captcha-area">
           <div id="captcha" class="captcha-wrap" role="group" aria-label="Human verification"></div>
+          <div id="captchaVerified" class="captcha-verified hidden" role="status"><span aria-hidden="true">✓</span> Verified</div>
         </div>
 
         <div id="verifyFields" class="hidden">
@@ -66,6 +67,7 @@
     </section>
   <nav class="policy-links" aria-label="Policies and support"><a href="index.html">Company</a><a href="app.html">Download</a><a href="legal.html">All terms &amp; policies</a><a href="terms-of-service.html">Terms of Service</a><a href="author-terms.html">Author Terms of Service</a><a href="privacy-policy.html">Privacy Policy</a><a href="cookie-policy.html">Cookie Policy</a><a href="dmca-notice.html">DMCA Notice</a><a href="child-safety-standards.html">Child Safety Standards</a><a href="data-deletion.html">Account &amp; Data Deletion</a><a href="refund-policy.html">Refund Policy</a><a href="help-feedback.html">Help &amp; feedback</a></nav></main>
 
+  <script src="i18n.js"></script>
   <script src="site.js"></script>
   <script>
     const $ = id => document.getElementById(id);
@@ -86,6 +88,8 @@
     let challengeId = null;
     let captchaWidget = null;
     let captchaToken = '';
+    // True once the widget's token was sent with a code request.
+    let tokenSpent = false;
     let resendIn = 0;
     let verifiedSession = null;
 
@@ -112,6 +116,7 @@
       captchaWidget = window.turnstile.render('#captcha', {
         sitekey: '0x4AAAAAAFiIwYxQwNiepNxZ',
         size: 'flexible',
+        language: ({ zh: 'zh-cn', pt: 'pt-br' })[window.SheSayI18n?.locale] || window.SheSayI18n?.locale || 'auto',
         'refresh-expired': 'manual',
         'refresh-timeout': 'manual',
         callback: token => { captchaToken = token; updateGates(); },
@@ -123,8 +128,13 @@
     }
     function resetCaptcha() {
       captchaToken = '';
+      tokenSpent = false;
       if (captchaWidget !== null && window.turnstile) window.turnstile.reset(captchaWidget);
       updateGates();
+    }
+    // Code requests accept the human pass; password sign-in needs a token.
+    function humanVerified() {
+      return Boolean(captchaToken) || (mode !== 'login' && Boolean(SheSay.humanPass()));
     }
     function takeCaptchaToken() {
       if (!captchaToken) throw new Error('Complete the human verification first.');
@@ -133,18 +143,21 @@
       return token;
     }
     // Send code and password login stay disabled until the check has passed.
+    // After a code is sent the check stays verified (human pass); only a
+    // password sign-in, which needs a fresh token, brings the widget back.
     function updateGates() {
-      const verified = Boolean(captchaToken);
+      const verified = humanVerified();
       const waiting = resendIn > 0;
-      // While a sent code is in its resend wait, no new check is needed yet.
-      $('captchaArea').classList.toggle('hidden',
-        waiting && $('existingChoice').classList.contains('hidden'));
+      const showBadge = !captchaToken && mode !== 'login' && Boolean(SheSay.humanPass());
+      $('captchaVerified').classList.toggle('hidden', !showBadge);
+      $('captcha').classList.toggle('hidden', showBadge);
+      if (!showBadge && tokenSpent) resetCaptcha();
       $('sendCode').disabled = !verified || waiting;
       $('sendCode').textContent = waiting ? `Resend in ${resendIn}s` : 'Send code';
       $('submit').disabled = mode === 'login' && !verified;
     }
-    function startResendWait() {
-      resendIn = 60;
+    function startResendWait(seconds = 60) {
+      resendIn = seconds;
       const tick = () => {
         resendIn -= 1;
         updateGates();
@@ -242,12 +255,23 @@
       const email = $('email').value.trim();
       if (!/^\S+@\S+\.\S+$/.test(email)) throw new Error('Enter a valid email address.');
       if (mode === 'register') registrationValuesValid();
-      const token = takeCaptchaToken();
+      if (!humanVerified()) throw new Error('Complete the human verification first.');
+      // The token, if any, is spent here; the returned human pass keeps the
+      // check in its verified state for resends.
+      const token = captchaToken;
+      captchaToken = '';
+      tokenSpent = Boolean(token);
       const started = mode === 'register'
         ? await SheSay.fusion('startEmailRegistration', { email })
         : null;
-      const { error } = await sb.auth.signInWithOtp({ email, options: { captchaToken: token } });
-      if (error) throw error;
+      try {
+        await SheSay.sendCode({ email, purpose: mode === 'register' ? 'signup' : 'login', captchaToken: token });
+      } catch (error) {
+        if (error.code === 'cooldown') startResendWait(error.retryAfter || 60);
+        throw error;
+      } finally {
+        updateGates();
+      }
       challengeId = started?.challengeId ?? null;
       startResendWait();
       showNotice('Verification code sent. Check your email.', 'success');
@@ -297,7 +321,7 @@
     };
     $('keepAccount').onclick = () => location.replace(returnTo);
     $('replaceAccount').onclick = async () => {
-      if (!verifiedSession || !confirm('Delete the original account and all data to create a new account? This cannot be undone.')) return;
+      if (!verifiedSession || !confirm(SheSayI18n.t('Delete the original account and all data to create a new account? This cannot be undone.'))) return;
       if (!captchaToken) {
         showNotice('Complete the human verification again before creating the replacement account.', 'error');
         return;

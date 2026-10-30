@@ -74,7 +74,7 @@
   $('refund-template').onclick = () => {
     const field = $('message');
     if (field.value.trim()) { field.focus(); view.sendStatus('Please add your order details to your current draft, or clear it to use the template.'); return; }
-    field.value = 'Refund request\nOrder number: \nItem or subscription: \nPurchase date: \nAmount and currency: \nReason: ';
+    field.value = SheSayI18n.t('Refund request\nOrder number: \nItem or subscription: \nPurchase date: \nAmount and currency: \nReason: ');
     field.focus();
   };
   const { data: { subscription } } = client.auth.onAuthStateChange((event, session) => chat.authChanged(event, session));

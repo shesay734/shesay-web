@@ -26,11 +26,23 @@ function setup({width = 380, fail = false, pending = false} = {}) {
     if (pending) await new Promise(resolve => { settle = resolve; });
     return fail ? {error: new Error('Request failed')} : {};
   };
+  // auth-guard: the first successful request returns a human pass.
+  let pass = null;
+  const codeRequests = [];
+  const sendCode = async args => {
+    codeRequests.push(args);
+    if (fail) throw Object.assign(new Error('Request failed'), {code: 'send_failed'});
+    pass = {pass: 'human-pass', expiresAt: Infinity};
+    return {ok: true};
+  };
   const context = vm.createContext({
     document: {getElementById: id => elements.get(id)}, window,
     URLSearchParams, setTimeout(fn) { timers.push(fn); }, history: {replaceState() {}},
     location: {search: '', hash: '', replace() {}},
-    SheSay: {client: {auth: {signInWithOtp: request, signInWithPassword: request}}},
+    SheSay: {
+      client: {auth: {signInWithPassword: request}},
+      sendCode, humanPass: () => pass,
+    },
   });
   vm.runInContext(html.match(/<script>([\s\S]*?)<\/script>/)[1], context);
   const get = id => elements.get(id);
@@ -40,7 +52,7 @@ function setup({width = 380, fail = false, pending = false} = {}) {
   context.window.renderCaptcha();
   const verify = token => { config.callback(token); };
   const tick = () => timers.shift()();
-  return {context, window, get, calls, renders, resets, verify, tick,
+  return {context, window, get, calls, codeRequests, renders, resets, verify, tick,
     config: () => config, settle: () => settle()};
 }
 
@@ -83,22 +95,37 @@ for (const callback of ['expired-callback', 'timeout-callback']) {
   });
 }
 
-test('a sent code hides the check during the resend wait instead of asking again', async () => {
+test('a sent code keeps the check verified and resends without asking again', async () => {
   const s = setup();
   s.get('otpLoginTab').onclick();
   s.verify('fresh-token');
   await s.get('sendCode').onclick();
-  assert.equal(s.calls[0].options.captchaToken, 'fresh-token');
-  assert.equal(s.get('captchaArea').classList.contains('hidden'), true);
+  assert.equal(s.codeRequests[0].captchaToken, 'fresh-token');
+  assert.equal(s.codeRequests[0].purpose, 'login');
+  assert.equal(s.get('captchaArea').classList.contains('hidden'), false);
+  assert.equal(s.get('captchaVerified').classList.contains('hidden'), false);
+  assert.equal(s.get('captcha').classList.contains('hidden'), true);
+  assert.equal(s.resets.length, 0);
   assert.equal(s.get('sendCode').disabled, true);
   assert.match(s.get('sendCode').textContent, /Resend in 60s/);
   for (let i = 0; i < 60; i++) s.tick();
-  assert.equal(s.get('captchaArea').classList.contains('hidden'), false);
   assert.equal(s.get('sendCode').textContent, 'Send code');
-  assert.equal(s.get('sendCode').disabled, true);
+  assert.equal(s.get('sendCode').disabled, false);
   await s.get('sendCode').onclick();
-  assert.equal(s.calls.length, 1);
-  assert.match(s.get('notice').textContent, /Complete the human verification/);
+  assert.equal(s.codeRequests.length, 2);
+  assert.equal(s.codeRequests[1].captchaToken, '');
+  assert.equal(s.resets.length, 0);
+});
+
+test('password sign-in after a code request gets a fresh check', async () => {
+  const s = setup();
+  s.get('otpLoginTab').onclick();
+  s.verify('fresh-token');
+  await s.get('sendCode').onclick();
+  s.get('passwordLoginTab').onclick();
+  assert.deepEqual(s.resets, ['widget']);
+  assert.equal(s.get('captcha').classList.contains('hidden'), false);
+  assert.equal(s.get('submit').disabled, true);
 });
 
 test('a failed send needs a new check because the token was used', async () => {
@@ -106,7 +133,7 @@ test('a failed send needs a new check because the token was used', async () => {
   s.get('otpLoginTab').onclick();
   s.verify('fresh-token');
   await s.get('sendCode').onclick();
-  assert.equal(s.calls.length, 1);
+  assert.equal(s.codeRequests.length, 1);
   assert.equal(s.get('captchaArea').classList.contains('hidden'), false);
   assert.deepEqual(s.resets, ['widget']);
   assert.equal(s.get('sendCode').disabled, true);

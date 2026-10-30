@@ -19,10 +19,13 @@ for (const [next, expected] of [['/post.html?id=post', '/post.html?id=post'], ['
     document: {getElementById: id => elements.get(id)},
     window: {}, URLSearchParams, setTimeout() {}, history: {replaceState() {}},
     location: {search: '?next=' + encodeURIComponent(next), hash: '', replace(v) { destination = v; }},
-    SheSay: {client: {auth: {
-      async signInWithOtp(args) { calls.push(['send', args]); return {}; },
-      async verifyOtp(args) { calls.push(['verify', args]); return {}; },
-    }}},
+    SheSay: {
+      client: {auth: {
+        async verifyOtp(args) { calls.push(['verify', args]); return {}; },
+      }},
+      async sendCode(args) { calls.push(['send', args]); return {ok: true}; },
+      humanPass: () => null,
+    },
   });
   vm.runInContext(html.match(/<script>([\s\S]*?)<\/script>/)[1], context);
   const get = id => elements.get(id);
