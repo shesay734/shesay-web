@@ -4,10 +4,10 @@
   <link rel="icon" type="image/png" href="app-icon.png">
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <meta name="theme-color" content="#a765c5">
+  <meta name="theme-color" content="#111111">
   <title>Log in or sign up · SheSay</title>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <link rel="stylesheet" href="site.css?v=turnstile-2">
+  <link rel="stylesheet" href="site.css?v=app-style-1">
 </head>
 <body>
   <main class="auth-stage">
@@ -41,7 +41,6 @@
         </div>
 
         <div id="captchaArea" class="captcha-area">
-          <button id="verifyHuman" class="button ghost" type="button">Verify you're human</button>
           <div id="captcha" class="captcha-wrap" role="group" aria-label="Human verification"></div>
         </div>
 
@@ -104,35 +103,27 @@
       if (nickname.length < 2 || nickname.length > 10) throw new Error('Nickname must be 2–10 characters.');
       if (password.length < 6 || password.length > 16 || /\s/.test(password)) throw new Error('Password must be 6–16 characters with no spaces.');
     }
-    // The check starts only when the user clicks "Verify you're human", and
-    // Turnstile never refreshes it on its own. A token is single-use, so it is
-    // dropped once a request has used it.
+    // Cloudflare's own widget is shown as soon as Turnstile loads. It never
+    // refreshes an expired check on its own; the widget shows Cloudflare's
+    // refresh link instead. A token is single-use, so the widget is reset for
+    // a fresh check once a request has used it.
     function renderCaptcha() {
-      if (captchaWidget !== null) return;
-      if (!window.turnstile) {
-        showNotice('Human verification is still loading. Try again in a moment, or reload this page.', 'error');
-        return;
-      }
+      if (captchaWidget !== null || !window.turnstile) return;
       captchaWidget = window.turnstile.render('#captcha', {
         sitekey: '0x4AAAAAAFiIwYxQwNiepNxZ',
-        size: $('captchaArea').clientWidth < 300 ? 'compact' : 'normal',
+        size: 'flexible',
         'refresh-expired': 'manual',
         'refresh-timeout': 'manual',
         callback: token => { captchaToken = token; updateGates(); },
-        'expired-callback': () => resetCaptcha(),
-        'timeout-callback': () => resetCaptcha(),
-        'error-callback': () => {
-          resetCaptcha();
-          showNotice('Human verification could not load. Check your connection and try again.', 'error');
-        },
+        'expired-callback': () => { captchaToken = ''; updateGates(); },
+        'timeout-callback': () => { captchaToken = ''; updateGates(); },
         theme: 'light',
       });
       updateGates();
     }
     function resetCaptcha() {
       captchaToken = '';
-      if (captchaWidget !== null && window.turnstile) window.turnstile.remove(captchaWidget);
-      captchaWidget = null;
+      if (captchaWidget !== null && window.turnstile) window.turnstile.reset(captchaWidget);
       updateGates();
     }
     function takeCaptchaToken() {
@@ -145,10 +136,9 @@
     function updateGates() {
       const verified = Boolean(captchaToken);
       const waiting = resendIn > 0;
-      $('verifyHuman').classList.toggle('hidden', captchaWidget !== null);
       // While a sent code is in its resend wait, no new check is needed yet.
       $('captchaArea').classList.toggle('hidden',
-        waiting && captchaWidget === null && $('existingChoice').classList.contains('hidden'));
+        waiting && $('existingChoice').classList.contains('hidden'));
       $('sendCode').disabled = !verified || waiting;
       $('sendCode').textContent = waiting ? `Resend in ${resendIn}s` : 'Send code';
       $('submit').disabled = mode === 'login' && !verified;
@@ -163,9 +153,8 @@
       updateGates();
       setTimeout(tick, 1000);
     }
-    $('verifyHuman').onclick = renderCaptcha;
+    window.renderCaptcha = renderCaptcha;
     window.onTurnstileLoadError = () => {
-      resetCaptcha();
       showNotice('Human verification could not load. Check your connection and reload this page.', 'error');
     };
 
@@ -333,6 +322,6 @@
     };
     render();
   </script>
-  <script src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit" async defer onerror="onTurnstileLoadError()"></script>
+  <script src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit&onload=renderCaptcha" async defer onerror="onTurnstileLoadError()"></script>
 </body>
 </html>

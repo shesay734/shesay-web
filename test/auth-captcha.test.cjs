@@ -16,10 +16,10 @@ function setup({width = 380, fail = false, pending = false} = {}) {
     }});
   }
   let config, settle;
-  const calls = [], renders = [], removals = [], timers = [];
+  const calls = [], renders = [], resets = [], timers = [];
   const window = {turnstile: {
     render(selector, value) { config = value; renders.push(value); return 'widget'; },
-    remove(id) { removals.push(id); },
+    reset(id) { resets.push(id); },
   }};
   const request = async args => {
     calls.push(args);
@@ -36,32 +36,26 @@ function setup({width = 380, fail = false, pending = false} = {}) {
   const get = id => elements.get(id);
   get('email').value = 'fixture@example.invalid';
   get('password').value = 'test-only';
-  const verify = token => { get('verifyHuman').onclick(); config.callback(token); };
+  // Turnstile's script calls the onload hook once it is ready.
+  context.window.renderCaptcha();
+  const verify = token => { config.callback(token); };
   const tick = () => timers.shift()();
-  return {context, window, get, calls, renders, removals, verify, tick,
+  return {context, window, get, calls, renders, resets, verify, tick,
     config: () => config, settle: () => settle()};
 }
 
-test('the check waits for the user to click and never refreshes on its own', () => {
+test('Cloudflare widget renders directly, with no extra button, and never refreshes on its own', () => {
   const s = setup();
-  assert.equal(s.renders.length, 0);
-  assert.equal(s.get('sendCode').disabled, true);
-  assert.equal(s.get('submit').disabled, true);
-  s.get('verifyHuman').onclick();
+  assert.equal(s.get('verifyHuman'), undefined);
   assert.equal(s.renders.length, 1);
   assert.equal(s.config().sitekey, '0x4AAAAAAFiIwYxQwNiepNxZ');
-  assert.equal(s.config().size, 'normal');
+  assert.equal(s.config().size, 'flexible');
   assert.equal(s.config()['refresh-expired'], 'manual');
   assert.equal(s.config()['refresh-timeout'], 'manual');
-  assert.equal(s.get('verifyHuman').classList.contains('hidden'), true);
-  s.get('verifyHuman').onclick();
+  assert.equal(s.get('sendCode').disabled, true);
+  assert.equal(s.get('submit').disabled, true);
+  s.context.window.renderCaptcha();
   assert.equal(s.renders.length, 1);
-});
-
-test('narrow forms get the compact widget', () => {
-  const s = setup({width: 220});
-  s.get('verifyHuman').onclick();
-  assert.equal(s.config().size, 'compact');
 });
 
 test('send code is enabled only after the check passes, and switching mode keeps it', () => {
@@ -73,15 +67,15 @@ test('send code is enabled only after the check passes, and switching mode keeps
   s.get('registerTab').onclick();
   s.get('otpLoginTab').onclick();
   assert.equal(s.get('sendCode').disabled, false);
-  assert.equal(s.removals.length, 0);
+  assert.equal(s.resets.length, 0);
 });
 
-for (const callback of ['expired-callback', 'timeout-callback', 'error-callback']) {
-  test(`${callback} returns to the verify button and blocks authentication`, async () => {
+for (const callback of ['expired-callback', 'timeout-callback']) {
+  test(`${callback} keeps the widget for a manual refresh and blocks authentication`, async () => {
     const s = setup();
     s.verify('old-token');
     s.config()[callback]();
-    assert.equal(s.get('verifyHuman').classList.contains('hidden'), false);
+    assert.equal(s.resets.length, 0);
     assert.equal(s.get('submit').disabled, true);
     await s.get('form').onsubmit({preventDefault() {}});
     assert.equal(s.calls.length, 0);
@@ -114,7 +108,7 @@ test('a failed send needs a new check because the token was used', async () => {
   await s.get('sendCode').onclick();
   assert.equal(s.calls.length, 1);
   assert.equal(s.get('captchaArea').classList.contains('hidden'), false);
-  assert.equal(s.get('verifyHuman').classList.contains('hidden'), false);
+  assert.deepEqual(s.resets, ['widget']);
   assert.equal(s.get('sendCode').disabled, true);
 });
 
@@ -127,14 +121,12 @@ test('a pending password request consumes its token before another action can re
   assert.equal(s.calls[0].options.captchaToken, 'fresh-token');
   s.settle();
   await first;
-  assert.deepEqual(s.removals, ['widget']);
+  assert.deepEqual(s.resets, ['widget']);
 });
 
 test('script load failure reports a recoverable error without submitting credentials', () => {
   const s = setup();
-  s.verify('old-token');
   s.window.onTurnstileLoadError();
-  assert.equal(vm.runInContext('captchaToken', s.context), '');
   assert.match(s.get('notice').textContent, /reload this page/);
   assert.equal(s.calls.length, 0);
 });
