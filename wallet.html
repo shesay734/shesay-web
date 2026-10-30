@@ -23,6 +23,7 @@
           <h1 id="balance-label" class="wallet-label">Wallet balance</h1>
           <div id="balance" class="amount">0 credits</div>
           <p id="balanceUsd" class="wallet-usd">≈ $0.00</p>
+          <p id="balanceFrozen" class="wallet-hint hidden" role="status"></p>
           <p class="muted wallet-hint">Use your credits to subscribe, purchase content, and support authors.</p>
         </div>
         <button id="refresh" class="button ghost" type="button">Refresh</button>
@@ -77,7 +78,10 @@
     const CREDITS_PER_USD = 10;
     const money = value => '$' + Number(value || 0).toFixed(2);
     // Balances are stored in USD; the app shows them as credits with trailing zeros trimmed.
-    const credits = usd => Number((Number(usd || 0) * CREDITS_PER_USD).toFixed(6)).toLocaleString('en-US', { maximumFractionDigits: 6 }) + ' credits';
+    const credits = usd => {
+      const n = Number((Number(usd || 0) * CREDITS_PER_USD).toFixed(6));
+      return n.toLocaleString('en-US', { maximumFractionDigits: 6 }) + (n === 1 ? ' credit' : ' credits');
+    };
     const topupPoints = amount => Number(amount || 0) * CREDITS_PER_USD;
     function selectedTopupPoints(amount) {
       const promo = topupPromotions.get(Number(amount));
@@ -152,9 +156,13 @@
     }
     async function refreshBalance() {
       if (!account) return null;
-      const { data, error } = await sb.from('wallets').select('balance').eq('user_id', account.id).maybeSingle();
+      const { data, error } = await sb.from('wallets').select('balance,frozen_balance').eq('user_id', account.id).maybeSingle();
       $('balance').textContent = credits(data?.balance);
       $('balanceUsd').textContent = '≈ ' + money(data?.balance);
+      // Same notice as the app: credits of a top-up with a pending refund cannot be spent.
+      const frozen = Number(data?.frozen_balance || 0);
+      $('balanceFrozen').textContent = frozen > 0 ? `${credits(frozen)} frozen for a pending refund request` : '';
+      $('balanceFrozen').classList.toggle('hidden', !(frozen > 0));
       return error;
     }
     function selectAmount(button) {
