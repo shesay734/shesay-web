@@ -184,6 +184,7 @@
           const body = await Promise.resolve(error.context?.json?.()).catch(() => null);
           throw new Error(body?.error || 'Could not start the payment. Please try again.');
         }
+        try { sessionStorage.setItem('stripeCheckoutSession', data.sessionId || ''); } catch (_) {}
         location.assign(data.url);
       } catch (error) {
         notice(error.message, 'error');
@@ -196,7 +197,15 @@
       const result = params.get('topup');
       if (!result) return;
       history.replaceState(null, '', location.pathname);
-      if (result === 'cancelled') { notice('Payment cancelled. No money was taken.'); return; }
+      if (result === 'cancelled') {
+        notice('Payment cancelled. No money was taken.');
+        // Close the Stripe session now so the history shows Cancelled, not Pending.
+        let sessionId = '';
+        try { sessionId = sessionStorage.getItem('stripeCheckoutSession') || ''; sessionStorage.removeItem('stripeCheckoutSession'); } catch (_) {}
+        await sb.functions.invoke('stripe-checkout', { body: { action: 'cancel', sessionId } }).catch(() => null);
+        await loadHistory();
+        return;
+      }
       const sessionId = params.get('session_id');
       notice('Payment received. Waiting for confirmation from Stripe…');
       for (let attempt = 0; attempt < 10; attempt++) {
