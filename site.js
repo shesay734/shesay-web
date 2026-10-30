@@ -49,7 +49,7 @@ window.SheSay = (() => {
     document.documentElement.lang = locale;
   }
   function mount() {
-    const host = document.querySelector('.corporate-header, .share-header, .site-header, .home-header');
+    const host = document.querySelector('.corporate-header, .share-header, .site-header, .home-header, .site-shell');
     if (!host || host.querySelector('.site-language')) return;
     const wrap = document.createElement('label');
     wrap.className = 'site-language';
@@ -61,7 +61,8 @@ window.SheSay = (() => {
     select.value = languages.some(([value]) => value === saved) ? saved : 'en';
     select.addEventListener('change', () => { localStorage.setItem(key, select.value); translate(select.value); });
     wrap.append('◎ ', select);
-    host.appendChild(wrap);
+    if (host.classList.contains('site-shell')) host.insertBefore(wrap, host.firstChild);
+    else host.appendChild(wrap);
     translate(select.value);
   }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', mount, { once: true }); else mount();
