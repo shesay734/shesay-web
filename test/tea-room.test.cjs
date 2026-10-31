@@ -48,14 +48,14 @@ test('missing id does not fetch or expose an inert join button', async () => {
   const {elements: e, requests} = await load('?id=');
   assert.equal(requests.length, 0);
   assert.equal(e.get('card').classList.contains('hidden'), true);
-  assert.equal(e.get('status').textContent, 'Invalid tea room link');
+  assert.equal(e.get('status').textContent, 'Invalid group link');
 });
 
 test('missing room and failed RPC keep the card hidden with an error', async () => {
   for (const [data, ok] of [[null, true], [{}, false]]) {
     const {elements: e} = await load('?id=room', data, ok);
     assert.equal(e.get('card').classList.contains('hidden'), true);
-    assert.equal(e.get('status').textContent, 'This tea room does not exist or is temporarily unavailable');
+    assert.equal(e.get('status').textContent, 'This group does not exist or is temporarily unavailable');
   }
 });
 

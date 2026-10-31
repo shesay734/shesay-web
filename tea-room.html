@@ -5,7 +5,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
   <meta name="color-scheme" content="light">
-  <title>SheSay · Tea Room</title>
+  <title>SheSay · Group</title>
   <meta name="theme-color" content="#f9f9f9">
   <link rel="stylesheet" href="site.css">
   <link rel="stylesheet" href="share.css">
@@ -21,18 +21,18 @@
     <section id="card" class="card hidden">
       <div id="hero" class="hero"></div>
       <div class="content">
-        <p class="eyebrow">YOU’RE INVITED · TEA ROOM</p>
+        <p class="eyebrow">YOU’RE INVITED · GROUP</p>
         <div class="room">
-          <img id="avatar" class="avatar hidden" alt="Tea room avatar">
+          <img id="avatar" class="avatar hidden" alt="Group avatar">
           <div id="avatarFallback" class="avatar avatar-fallback">S</div>
           <h1 id="name" class="name"></h1>
         </div>
-        <h2 class="label">A note from the room</h2>
+        <h2 class="label">A note from the group</h2>
         <div id="announcement" class="announcement"></div>
-        <a id="openApp" class="open" href="#">Join the room in SheSay</a>
+        <a id="openApp" class="open" href="#">Join the group in SheSay</a>
       </div>
     </section>
-    <div id="status" class="status" role="status" aria-live="polite">Loading tea room…</div>
+    <div id="status" class="status" role="status" aria-live="polite">Loading group…</div>
     <aside class="share-discover" aria-label="Discover SheSay"><img src="app-icon.png" alt="" width="44" height="44"><div><strong>A little closer to your community.</strong><p>Discover more stories and conversations on SheSay.</p></div><a href="app.html">Explore the app <span aria-hidden="true">↗</span></a></aside>
     <footer class="share-footer"><span>Shared on SheSay</span><nav aria-label="Footer"><a href="help-feedback.html">Help</a><a href="privacy-policy.html">Privacy</a><a href="terms-of-service.html">Terms</a></nav></footer>
   </main>
@@ -48,7 +48,7 @@
     const card=document.getElementById('card');
     const openApp=document.getElementById('openApp');
     const safeUrl=value=>{try{const u=new URL(value);return u.protocol==='https:'?u.href:''}catch(_){return''}};
-    if(!id){status.textContent='Invalid tea room link';}
+    if(!id){status.textContent='Invalid group link';}
     else{
       openApp.href='shesay://tea-room?id='+encodeURIComponent(id);
       fetch(endpoint,{method:'POST',headers:{'Content-Type':'application/json','apikey':apiKey},body:JSON.stringify({target_room_id:id})})
@@ -56,7 +56,7 @@
         .then(data=>{
           const room=Array.isArray(data)?data[0]:data;
           if(!room)throw new Error();
-          document.getElementById('name').textContent=room.name||'Tea room';
+          document.getElementById('name').textContent=room.name||'Group';
           document.getElementById('announcement').textContent=room.announcement||'No announcement yet';
           const background=safeUrl(room.background_image_url||'');
           if(background)document.getElementById('hero').style.backgroundImage=`url("${background.replaceAll('"','%22')}")`;
@@ -64,7 +64,7 @@
           if(avatar){const img=document.getElementById('avatar');img.src=avatar;img.classList.remove('hidden');document.getElementById('avatarFallback').classList.add('hidden');}
           card.classList.remove('hidden');status.classList.add('hidden');
         })
-        .catch(()=>{status.textContent='This tea room does not exist or is temporarily unavailable';});
+        .catch(()=>{status.textContent='This group does not exist or is temporarily unavailable';});
     }
   </script>
 </body>
