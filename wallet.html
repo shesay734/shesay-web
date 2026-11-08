@@ -92,10 +92,10 @@
       document.querySelectorAll('.topup-amount').forEach(button => {
         const amount = Number(button.dataset.amount);
         const promo = topupPromotions.get(amount);
-        // The card shows the package's base credits; the bonus line adds to it.
+        // The card shows the package's base credits; the corner badge shows the bonus.
         button.querySelector('strong').textContent = `${topupPoints(amount).toLocaleString('en-US')} credits`;
         const promoNode = button.querySelector('.topup-promo');
-        promoNode.textContent = promo ? `+${promo.bonus_points} bonus · ${promo.label}` : '';
+        promoNode.textContent = promo ? `+${promo.bonus_points.toLocaleString('en-US')}credits` : '';
         promoNode.classList.toggle('hidden', !promo);
       });
       selectAmount(document.querySelector(`.topup-amount[data-amount="${topupAmount}"]`));
@@ -169,11 +169,9 @@
     function selectAmount(button) {
       topupAmount = Number(button.dataset.amount);
       document.querySelectorAll('.topup-amount').forEach(other => other.setAttribute('aria-checked', String(other === button)));
-      const promo = topupPromotions.get(topupAmount);
+      // Total credits only (bonus included).
       const offer = `${selectedTopupPoints(topupAmount).toLocaleString('en-US')} credits`;
-      $('stripeCheckout').textContent = promo
-        ? `Pay $${topupAmount} with Stripe · get ${offer} (${topupPoints(topupAmount).toLocaleString('en-US')} + ${promo.bonus_points} bonus)`
-        : `Pay $${topupAmount} with Stripe · get ${offer}`;
+      $('stripeCheckout').textContent = `Pay $${topupAmount} with Stripe · get ${offer}`;
     }
     async function startCheckout() {
       const button = $('stripeCheckout');
