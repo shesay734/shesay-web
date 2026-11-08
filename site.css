@@ -54,7 +54,7 @@ label { display: block; margin: 14px 0 6px; font-size: 14px; font-weight: 600; }
 .corporate-nav { display:flex; align-items:center; gap:28px; font-size:14px; font-weight:600; }
 .corporate-nav a { color:#111111; }
 .corporate-nav a:hover { color:#111111; }
-.corporate-nav-cta { padding:9px 16px; border-radius:999px; background:#111111; color:#fff !important; box-shadow:0 5px 13px rgba(17,17,17,.18); }
+.corporate-nav-cta { display:inline-flex; align-items:center; justify-content:center; min-height:36px; padding:0 16px; border-radius:999px; background:#111111; color:#fff !important; box-shadow:0 5px 13px rgba(17,17,17,.18); }
 .corporate-hero { position:relative; display:grid; grid-template-columns:minmax(0,1.02fr) minmax(390px,.98fr); align-items:center; gap:38px; min-height:590px; padding:65px 48px 75px; overflow:hidden; border-radius:0 0 34px 34px; background:#f4f4f4; }
 .corporate-hero::before { content:""; position:absolute; left:-130px; top:-185px; width:440px; height:440px; border-radius:50%; background:#e3e3e3; opacity:.75; }
 .corporate-hero-copy,.corporate-orbit { position:relative; z-index:1; }
