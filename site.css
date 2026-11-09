@@ -308,10 +308,11 @@ a:focus-visible,button:focus-visible,textarea:focus-visible { outline:3px solid 
 }
 
 /* Public language selector */
+.corporate-nav .site-language { margin:0; }
 .site-language { display:inline-flex; align-items:center; gap:5px; margin:0 0 0 auto; color:#111111; font-size:12px; font-weight:650; white-space:nowrap; }
 .site-language select { min-height:34px; padding:0 24px 0 9px; border:1px solid #e6e6e6; border-radius:999px; background:#fff; color:#111111; font:inherit; cursor:pointer; }
 .site-language select:focus-visible { outline:3px solid #c8c8c8; outline-offset:2px; }
-@media (max-width:760px) { .site-language { margin-left:0; } .corporate-header .site-language { order:3; justify-content:flex-start; } }
+@media (max-width:760px) { .site-language { margin-left:0; } .corporate-header .site-language { order:3; justify-content:flex-start; } .corporate-header .corporate-nav { row-gap:16px; } }
 
 /* ===== App design layer =====
    Matches the She app: white surfaces, black ink, grey secondary text,

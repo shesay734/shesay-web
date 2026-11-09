@@ -30,7 +30,9 @@
       <a href="wallet.html" role="menuitem">Home</a>
       <button type="button" role="menuitem" class="account-nav-signout">Sign out</button>
     </div>`;
-  nav.append(account);
+  // Right after the Join / Log In button, before the language menu.
+  if (guestLink) guestLink.after(account);
+  else nav.append(account);
 
   const trigger = account.querySelector('.account-nav-trigger');
   const dropdown = account.querySelector('.account-nav-dropdown');

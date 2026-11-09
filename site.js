@@ -109,7 +109,12 @@ window.SheSay = (() => {
       i18n.setLocale(select.value);
     });
     wrap.append('◎ ', select);
-    if (host.matches('.site-shell, .auth-stage')) host.insertBefore(wrap, host.firstChild);
+    // In the top bar the language menu always follows the Join / Log In
+    // button (and the account menu, when signed in).
+    const cta = host.querySelector('.corporate-nav-cta');
+    const account = host.querySelector('.corporate-nav .account-nav');
+    if (cta) (account || cta).after(wrap);
+    else if (host.matches('.site-shell, .auth-stage')) host.insertBefore(wrap, host.firstChild);
     else host.appendChild(wrap);
   }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', mount, { once: true }); else mount();
