@@ -95,7 +95,9 @@ window.SheSay = (() => {
   const initial = supported(preferred) ? preferred : 'en';
   i18n.setLocale(initial);
   function mount() {
-    const host = document.querySelector('.corporate-header, .share-header, .site-header, .home-header, .site-shell, .auth-stage');
+    // Only the company home and the app page carry a language menu; every
+    // other page follows the language chosen there.
+    const host = document.querySelector('.corporate-header[data-language-menu]');
     if (!host || host.querySelector('.site-language')) return;
     const wrap = document.createElement('label');
     wrap.className = 'site-language';
@@ -114,7 +116,6 @@ window.SheSay = (() => {
     const cta = host.querySelector('.corporate-nav-cta');
     const account = host.querySelector('.corporate-nav .account-nav');
     if (cta) (account || cta).after(wrap);
-    else if (host.matches('.site-shell, .auth-stage')) host.insertBefore(wrap, host.firstChild);
     else host.appendChild(wrap);
   }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', mount, { once: true }); else mount();
