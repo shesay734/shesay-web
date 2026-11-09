@@ -25,7 +25,7 @@
     link.target = '_blank';
     link.rel = 'noreferrer';
     const label = link.querySelector('em');
-    if (label && apkUrls[link.dataset.abi]) label.textContent = 'Download signed APK ↗';
+    if (label && apkUrls[link.dataset.abi]) label.textContent = 'Download';
   });
   options.forEach(option => option.classList.toggle('is-recommended', option.dataset.abi === abi));
 
