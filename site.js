@@ -110,7 +110,7 @@ window.SheSay = (() => {
       try { localStorage.setItem(key, select.value); } catch (_) {}
       i18n.setLocale(select.value);
     });
-    wrap.append('◎ ', select);
+    wrap.append(select);
     // In the top bar the language menu always follows the Join / Log In
     // button (and the account menu, when signed in).
     const cta = host.querySelector('.corporate-nav-cta');
