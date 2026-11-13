@@ -101,7 +101,7 @@
       selectAmount(document.querySelector(`.topup-amount[data-amount="${topupAmount}"]`));
     }
     async function loadTopupPromotions() {
-      const { data, error } = await sb.rpc('get_active_top_up_promotions', { target_surface: 'web' });
+      const { data, error } = await sb.rpc('get_active_top_up_promotions', { target_channel: 'stripe' });
       if (error) return;
       topupPromotions.clear();
       (data || []).forEach(promo => {
