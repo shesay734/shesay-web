@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <link rel="icon" type="image/png" href="app-icon.png">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#111111">
+  <meta name="robots" content="noindex">
+  <title>Top-up · SheSay</title>
+  <link rel="stylesheet" href="site.css">
+  <link rel="stylesheet" href="share.css">
+</head>
+<body class="share-page">
+  <!-- Stripe Checkout returns here when the top-up was started in the app;
+       the page hands the result back to the app. -->
+  <main class="wallet-shell">
+    <h1 id="title">Payment received</h1>
+    <p id="text" class="muted">Return to SheSay to see your credits.</p>
+    <a id="back" class="button open-app" href="shesay://wallet-topup">Back to SheSay</a>
+  </main>
+  <script>
+    (function () {
+      const params = new URLSearchParams(location.search);
+      const cancelled = params.get('topup') === 'cancelled';
+      const link = 'shesay://wallet-topup?' + new URLSearchParams({
+        topup: cancelled ? 'cancelled' : 'success',
+        session_id: params.get('session_id') || '',
+      }).toString();
+      if (cancelled) {
+        document.getElementById('title').textContent = 'Payment cancelled';
+        document.getElementById('text').textContent = 'You were not charged.';
+      }
+      document.getElementById('back').href = link;
+      location.href = link;
+    })();
+  </script>
+</body>
+</html>
