@@ -32,8 +32,10 @@
 .share-page .publication-cover { display: block; width: 100%; max-height: 520px; margin-top: 28px; object-fit: contain; border-radius: 16px; background: #f7f7f7; }
 .publication-tags { display: flex; flex-wrap: wrap; gap: 8px; margin: 24px 0 0; }
 .publication-tags span { padding: 4px 12px; border-radius: 8px; background: #f5f5f5; color: #111111; font-size: 12px; overflow-wrap: anywhere; min-width: 0; }
-.share-page .button, .share-page .open { min-height: 50px; height: auto; padding: 13px 22px; border: 0; border-radius: 14px; background: #111111; color: #fff; font: inherit; font-size: 14px; font-weight: 650; line-height: 1.5; text-align: center; cursor: pointer; }
-.share-page .button:hover, .share-page .open:hover { background: #111111; color: #fff; }
+/* Same as the app's Pay button: icon-purple gradient, 46px, fully rounded. */
+.share-page .button, .share-page .open { min-height: 46px; height: auto; padding: 11px 22px; border: 0; border-radius: 23px; background: linear-gradient(90deg, #cd82fb, #b766fa, #a04af7); color: #fff; font: inherit; font-size: 15px; font-weight: 600; line-height: 1.6; text-align: center; text-decoration: none; cursor: pointer; }
+.share-page .button:hover, .share-page .open:hover { background: linear-gradient(90deg, #cd82fb, #b766fa, #a04af7); filter: brightness(1.06); color: #fff; text-decoration: none; }
+.share-page .button:disabled, .share-page .button[disabled] { background: #ece6f1; color: #a99bb5; filter: none; cursor: default; }
 .share-page .open-app, .share-page .open { display: flex; align-items: center; justify-content: center; width: 100%; margin-top: 32px; }
 .share-page .updates { margin-top: 38px; }
 .share-page .updates h2 { font-size: 18px; }
