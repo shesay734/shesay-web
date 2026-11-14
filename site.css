@@ -309,10 +309,17 @@ a:focus-visible,button:focus-visible,textarea:focus-visible { outline:3px solid 
 
 /* Public language selector */
 .corporate-nav .site-language { margin:0; }
-.site-language { display:inline-flex; align-items:center; gap:5px; margin:0 0 0 auto; color:#111111; font-size:12px; font-weight:650; white-space:nowrap; }
-.site-language select { min-height:34px; padding:0 24px 0 9px; border:1px solid #e6e6e6; border-radius:999px; background:#fff; color:#111111; font:inherit; cursor:pointer; }
-.site-language select:focus-visible { outline:3px solid #c8c8c8; outline-offset:2px; }
-@media (max-width:760px) { .site-language { margin-left:0; } .corporate-header .site-language { order:3; justify-content:flex-start; } .corporate-header .corporate-nav { row-gap:16px; } }
+.site-language { position:relative; display:inline-flex; align-items:center; margin:0 0 0 auto; color:#111111; font-size:12px; font-weight:650; white-space:nowrap; }
+.site-language-button { display:inline-flex; align-items:center; gap:6px; min-height:34px; padding:0 4px; border:0; outline:0; background:none; color:inherit; font:inherit; cursor:pointer; -webkit-tap-highlight-color:transparent; }
+.site-language-button:focus, .site-language-button:active { border:0; outline:0; box-shadow:none; }
+.site-language-button:focus-visible { text-decoration:underline; text-underline-offset:3px; }
+.site-language-chevron { width:6px; height:6px; margin-top:-3px; border-right:1.5px solid currentColor; border-bottom:1.5px solid currentColor; transform:rotate(45deg); transition:transform .15s; }
+.site-language-button[aria-expanded="true"] .site-language-chevron { margin-top:3px; transform:rotate(-135deg); }
+.site-language-menu { position:absolute; top:calc(100% + 6px); right:0; z-index:50; min-width:150px; max-height:min(400px, 70vh); margin:0; padding:6px; overflow:auto; scrollbar-width:thin; list-style:none; background:#fff; border-radius:12px; box-shadow:0 6px 24px rgba(0,0,0,.10); }
+.site-language-menu li { padding:9px 12px; border-radius:8px; color:#000; font-size:14px; font-weight:400; cursor:pointer; outline:0; }
+.site-language-menu li:hover, .site-language-menu li:focus { background:#f5f5f5; }
+.site-language-menu li[aria-selected="true"] { font-weight:700; }
+@media (max-width:760px) { .site-language { margin-left:0; } .corporate-header .site-language { order:3; justify-content:flex-start; } .corporate-header .site-language-menu { left:0; right:auto; } .corporate-header .corporate-nav { row-gap:16px; } }
 
 /* ===== App design layer =====
    Matches the She app: white surfaces, black ink, grey secondary text,

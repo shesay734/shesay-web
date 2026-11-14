@@ -99,18 +99,72 @@ window.SheSay = (() => {
     // other page follows the language chosen there.
     const host = document.querySelector('.corporate-header[data-language-menu]');
     if (!host || host.querySelector('.site-language')) return;
-    const wrap = document.createElement('label');
+    // A borderless button and a menu in the site's own style (a native
+    // <select> opens the operating system's list, which looks out of place).
+    const wrap = document.createElement('div');
     wrap.className = 'site-language';
-    wrap.title = 'Language';
-    const select = document.createElement('select');
-    select.setAttribute('aria-label', 'Language');
-    i18n.languages.forEach(([value, label]) => select.appendChild(new Option(label, value)));
-    select.value = i18n.locale;
-    select.addEventListener('change', () => {
-      try { localStorage.setItem(key, select.value); } catch (_) {}
-      i18n.setLocale(select.value);
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.className = 'site-language-button';
+    button.setAttribute('aria-haspopup', 'listbox');
+    button.setAttribute('aria-expanded', 'false');
+    button.setAttribute('aria-label', 'Language');
+    const current = document.createElement('span');
+    const chevron = document.createElement('span');
+    chevron.className = 'site-language-chevron';
+    chevron.setAttribute('aria-hidden', 'true');
+    button.append(current, chevron);
+    const menu = document.createElement('ul');
+    menu.className = 'site-language-menu';
+    menu.setAttribute('role', 'listbox');
+    menu.setAttribute('aria-label', 'Language');
+    menu.hidden = true;
+    const options = i18n.languages.map(([value, label]) => {
+      const item = document.createElement('li');
+      item.setAttribute('role', 'option');
+      item.tabIndex = -1;
+      item.dataset.value = value;
+      item.textContent = label;
+      item.addEventListener('click', () => choose(value));
+      item.addEventListener('keydown', event => {
+        if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); choose(value); }
+      });
+      menu.appendChild(item);
+      return item;
     });
-    wrap.append(select);
+    function render() {
+      const found = i18n.languages.find(([code]) => code === i18n.locale);
+      current.textContent = found ? found[1] : i18n.locale;
+      options.forEach(item => item.setAttribute('aria-selected', String(item.dataset.value === i18n.locale)));
+    }
+    function open() {
+      menu.hidden = false;
+      button.setAttribute('aria-expanded', 'true');
+      (options.find(item => item.dataset.value === i18n.locale) || options[0]).focus();
+    }
+    function close(refocus) {
+      if (menu.hidden) return;
+      menu.hidden = true;
+      button.setAttribute('aria-expanded', 'false');
+      if (refocus) button.focus();
+    }
+    function choose(value) {
+      try { localStorage.setItem(key, value); } catch (_) {}
+      i18n.setLocale(value);
+      render();
+      close(true);
+    }
+    button.addEventListener('click', () => (menu.hidden ? open() : close(false)));
+    menu.addEventListener('keydown', event => {
+      const index = options.indexOf(document.activeElement);
+      if (event.key === 'Escape') { event.preventDefault(); close(true); }
+      else if (event.key === 'ArrowDown') { event.preventDefault(); options[Math.min(index + 1, options.length - 1)].focus(); }
+      else if (event.key === 'ArrowUp') { event.preventDefault(); options[Math.max(index - 1, 0)].focus(); }
+      else if (event.key === 'Tab') close(false);
+    });
+    document.addEventListener('click', event => { if (!wrap.contains(event.target)) close(false); });
+    render();
+    wrap.append(button, menu);
     // In the top bar the language menu always follows the Join / Log In
     // button (and the account menu, when signed in).
     const cta = host.querySelector('.corporate-nav-cta');
