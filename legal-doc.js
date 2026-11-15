@@ -1,78 +1,119 @@
-// Legal pages show the same text as the app: the current version of the
-// document in the visitor's language, read from the app's legal document table.
-// The English text built into the page stays as the fallback.
+// Legal pages: the text lives in this website (legal/index.json and
+// legal/<key>/<version>/<locale>.txt), so updating a policy is a website
+// change. The app opens these pages in its in-app browser, and the server
+// copies each version into the database when people accept it.
+//
+// A page shows the current version in the visitor's language (English when
+// that language is missing); ?version=x shows an earlier version, and the
+// "Version history" link lists them all (legal-history.html?doc=<key>).
 (() => {
   const article = document.querySelector('[data-legal-doc]');
   if (!article) return;
   const key = article.getAttribute('data-legal-doc');
-  const url = 'https://suxprwbmoakcbopjuosa.supabase.co';
-  const apiKey = 'sb_publishable_JsggCmnvB1Q50l5z2W11Uw_AfKLxCx7';
-  const supported = ['en', 'zh', 'es', 'fr', 'it', 'de', 'ja', 'pt'];
-  const versionLabel = {
-    en: 'Version', zh: '版本', es: 'Versión', fr: 'Version',
-    it: 'Versione', de: 'Version', ja: 'バージョン', pt: 'Versão',
-  };
-  const cache = {};
-  let shown = article.getAttribute('data-legal-locale') || 'en';
-
-  const escape = (text) => text.replace(/[&<>"]/g, (c) => ({
-    '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;',
-  })[c]);
-
-  // Same structure the app shows: "1. Heading" lines become headings,
-  // "• item" lines a list, everything else a paragraph.
-  function render(content) {
-    const out = [];
-    let list = [];
-    const flush = () => {
-      if (list.length) out.push(`<ul>${list.map((i) => `<li>${escape(i)}</li>`).join('')}</ul>`);
-      list = [];
-    };
-    for (const raw of content.split('\n')) {
-      const line = raw.trim();
-      if (!line) { flush(); continue; }
-      if (line.startsWith('•')) { list.push(line.replace(/^•\s*/, '')); continue; }
-      flush();
-      if (/^\d+\.\s/.test(line)) out.push(`<h2>${escape(line)}</h2>`);
-      else out.push(`<p>${escape(line)}</p>`);
-    }
-    flush();
-    return out.join('\n');
-  }
-
-  async function load(locale) {
-    if (cache[locale]) return cache[locale];
-    const query = `${url}/rest/v1/legal_document_versions?document_key=eq.${key}` +
-      `&locale=eq.${locale}&is_current=eq.true&select=title,version,content&limit=1`;
-    const response = await fetch(query, { headers: { apikey: apiKey, Authorization: `Bearer ${apiKey}` } });
-    if (!response.ok) throw new Error(`legal ${response.status}`);
-    const rows = await response.json();
-    if (!rows.length) throw new Error('legal document missing');
-    cache[locale] = rows[0];
-    return rows[0];
-  }
+  const L = window.SheSayLegal;
+  const requested = new URLSearchParams(location.search).get('version');
+  let shown = null;
 
   async function show() {
-    const lang = (document.documentElement.lang || 'en').split('-')[0];
-    const locale = supported.includes(lang) ? lang : 'en';
+    const locale = L.locale();
     try {
-      const doc = await load(locale);
-      const current = (document.documentElement.lang || 'en').split('-')[0];
-      if ((supported.includes(current) ? current : 'en') !== locale) return;
-      article.querySelector('.page-heading h1').textContent = doc.title;
-      article.querySelector('.page-heading .date').textContent =
-        `${versionLabel[locale]}: ${doc.version}`;
-      article.querySelector('.document').innerHTML = render(doc.content);
-      document.title = `${doc.title} - SheSay`;
+      const index = await L.index();
+      const doc = index.documents[key];
+      if (!doc) return;
+      const entry = doc.versions.find((v) => v.version === (requested || doc.current))
+        || doc.versions.find((v) => v.version === doc.current);
+      const lang = entry.locales.includes(locale) ? locale : 'en';
+      const content = await L.text(key, entry.version, lang);
+      if (L.locale() !== locale) return;
+      const title = entry.titles[lang] || entry.titles.en;
+      const heading = article.querySelector('.page-heading');
+      heading.querySelector('h1').textContent = title;
+      const meta = heading.querySelector('.date');
+      meta.innerHTML = '';
+      meta.append(`${L.label('version', locale)}: ${entry.version} · ${L.label('published', locale)}: ${L.date(entry.published, locale)} · `);
+      const history = document.createElement('a');
+      history.href = `legal-history.html?doc=${encodeURIComponent(key)}`;
+      history.textContent = L.label('history', locale);
+      meta.append(history);
+      let banner = article.querySelector('.legal-old-version');
+      if (entry.version !== doc.current) {
+        if (!banner) {
+          banner = document.createElement('p');
+          banner.className = 'legal-old-version';
+          heading.after(banner);
+        }
+        banner.innerHTML = '';
+        banner.append(`${L.label('older', locale)} `);
+        const current = document.createElement('a');
+        current.href = doc.page;
+        current.textContent = L.label('viewCurrent', locale);
+        banner.append(current);
+      } else if (banner) {
+        banner.remove();
+      }
+      article.querySelector('.document').innerHTML = L.render(content);
+      document.title = `${title} - SheSay`;
       shown = locale;
+      showRecords();
     } catch (_) {
-      // Keep the built-in text when the document cannot be loaded.
+      // Keep the built-in English text when the files cannot be loaded.
     }
   }
 
+  // The signed-in member's consent records for this document, at the bottom
+  // of the page; each opens the version that was accepted.
+  let recordsVersion = 0;
+  async function showRecords() {
+    const version = ++recordsVersion;
+    const client = window.SheSay?.client;
+    const locale = L.locale();
+    let rows = null;
+    try {
+      const { data: { session } } = client ? await client.auth.getSession() : { data: {} };
+      if (session) {
+        const { data, error } = await client.from('legal_acceptances')
+          .select('version,locale,selected_at')
+          .eq('user_id', session.user.id)
+          .eq('document_key', key)
+          .order('selected_at', { ascending: false });
+        if (!error) rows = data;
+      }
+    } catch (_) {}
+    if (version !== recordsVersion) return;
+    article.querySelector('.legal-records')?.remove();
+    if (!rows) return;
+    const section = document.createElement('section');
+    section.className = 'legal-records';
+    const heading = document.createElement('h2');
+    heading.textContent = L.label('records', locale);
+    section.append(heading);
+    if (!rows.length) {
+      const empty = document.createElement('p');
+      empty.textContent = L.label('noRecords', locale);
+      section.append(empty);
+    } else {
+      const list = document.createElement('ul');
+      for (const row of rows) {
+        const item = document.createElement('li');
+        const link = document.createElement('a');
+        link.href = `${location.pathname.split('/').pop()}?version=${encodeURIComponent(row.version)}`;
+        link.textContent = L.label('agreed', locale)
+          .replace('{version}', row.version)
+          .replace('{date}', L.dateTime(row.selected_at, locale));
+        item.append(link);
+        list.append(item);
+      }
+      section.append(list);
+    }
+    article.querySelector('.document').after(section);
+  }
+  // site.js (the Supabase client) loads after this file.
+  document.addEventListener('DOMContentLoaded', () => {
+    window.SheSay?.client?.auth.onAuthStateChange(() => setTimeout(showRecords, 0));
+  });
+
   new MutationObserver(() => {
-    const lang = (document.documentElement.lang || 'en').split('-')[0];
-    if (lang !== shown) show();
+    if (L.locale() !== shown) show();
   }).observe(document.documentElement, { attributes: true, attributeFilter: ['lang'] });
   show();
 })();

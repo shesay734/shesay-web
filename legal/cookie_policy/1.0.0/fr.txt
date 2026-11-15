@@ -1,0 +1,11 @@
+1. Qu’est-ce qu’un cookie
+Les cookies sont de petits fichiers texte stockés sur votre appareil pour mémoriser vos préférences et améliorer votre expérience.
+
+2. Comment nous utilisons les cookies
+Nous utilisons des cookies pour : mémoriser votre état de connexion, enregistrer vos préférences de langue et de thème, et analyser l’utilisation de l’Application afin d’optimiser nos services.
+
+3. Cookies de tiers
+Nous pouvons faire appel à des services tiers (tels que des outils d’analyse) susceptibles de déposer leurs propres cookies. Veuillez vous reporter à leurs politiques de confidentialité.
+
+4. Vos choix
+Vous pouvez désactiver les cookies dans les paramètres de votre appareil, mais cela peut affecter le fonctionnement normal de l’Application. La poursuite de l’utilisation vaut acceptation de notre recours aux cookies.

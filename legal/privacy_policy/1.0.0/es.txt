@@ -1,0 +1,35 @@
+Esta Política de privacidad la ofrece SheSay LLC, una sociedad de responsabilidad limitada de Wyoming («SheSay», «nosotros», «nuestro» o «nos»). Explica cómo recopilamos, usamos, almacenamos, compartimos y protegemos tu información personal cuando usas la App, y cómo puedes gestionarla. Lee esta política detenidamente antes de usar la App.
+1. Información que recopilamos
+Solo recopilamos la información necesaria para prestar nuestros servicios:
+• Información de la cuenta: el número de teléfono o el correo electrónico que facilitas al registrarte o iniciar sesión, y la contraseña que estableces.
+• Información del perfil: apodo, avatar y otros datos que facilitas voluntariamente.
+• Contenido del usuario: publicaciones (momentos diarios, reportajes), comentarios, imágenes y fotos que subes a tu galería.
+• Datos de interacción: tus me gusta, favoritos y seguimientos.
+• Información del dispositivo y registros: modelo del dispositivo, versión del sistema operativo y registros de fallos recopilados para mantener el servicio estable y seguro.
+2. Cómo usamos la información
+• Para prestar el registro, el inicio de sesión, la autenticación y la seguridad de la cuenta;
+• Para mostrar tu contenido y ofrecer las funciones de la comunidad;
+• Para moderar contenidos y mantener las normas de la comunidad;
+• Para solucionar problemas y mejorar nuestros productos y servicios.
+3. Almacenamiento y seguridad de los datos
+Tu información se almacena en la base de datos en la nube cifrada que proporciona Supabase, y todas las transmisiones de datos están protegidas con cifrado TLS. Adoptamos medidas técnicas y administrativas razonables para proteger tu información frente al acceso, la divulgación o la alteración no autorizados.
+4. Cesión de información
+No vendemos tu información personal a terceros. Solo podemos compartir tu información en los siguientes casos necesarios:
+• Verificación por SMS: los mensajes de verificación se envían a través de Twilio (integrado mediante Supabase);
+• Moderación de contenido: las imágenes que subes pueden enviarse a Alibaba Cloud para la detección de seguridad del contenido;
+• Requisitos legales: cuando lo exija la ley, las autoridades públicas o para proteger la seguridad pública y los derechos legítimos.
+5. Tus derechos
+Tienes derecho a acceder, rectificar y suprimir tu información personal, así como a eliminar tu cuenta. Puedes actualizar tu correo y tu contraseña en la sección «Cuenta» de la App. Tras eliminar la cuenta, suprimiremos la información personal asociada a ella.
+Para solicitar la eliminación de tu cuenta y de los datos asociados, consulta la página de Eliminación de cuenta y solicitud de datos.
+6. Conservación y eliminación de datos
+Conservamos tu información personal solo durante el tiempo necesario para cumplir los fines descritos en esta política. Cuando elimines tu cuenta o tu contenido, suprimiremos o anonimizaremos la información correspondiente, salvo que la ley exija lo contrario.
+7. Privacidad de los menores
+La App está dirigida a personas adultas. Si eres menor de edad, úsala solo con el consentimiento y la orientación de tus padres o de tu tutor, y pide a tu tutor que lea esta política con atención.
+8. Actualizaciones de la política
+Podemos actualizar esta Política de privacidad periódicamente. En caso de cambios importantes, te avisaremos en la App. La política actualizada entra en vigor en la fecha de su publicación.
+9. Ley aplicable y resolución de conflictos
+Esta Política de privacidad y cualquier controversia relacionada con ella se rigen por las leyes del estado de Wyoming, sin atender a sus normas sobre conflicto de leyes. Toda controversia que no pueda resolverse de forma amistosa se resolverá mediante arbitraje final y vinculante con sede en el estado de Wyoming, salvo que tú y SheSay LLC acordéis por escrito otra ubicación.
+10. Contacto
+Si tienes alguna pregunta, comentario o queja sobre esta Política de privacidad o sobre nuestras prácticas de privacidad, puedes escribir a SheSay LLC a:
+Correo: support@shesayllc.com
+Dirección postal legal: 30 N Gould St #Ste R, Sheridan, WY 82801, USA

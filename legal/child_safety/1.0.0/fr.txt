@@ -1,0 +1,22 @@
+SheSay (l’« Application ») s’engage à protéger les enfants et à prévenir les abus sexuels et l’exploitation des enfants (CSAE) sur l’ensemble de notre plateforme. Cette page décrit nos normes de sécurité des enfants conformément aux exigences de la politique Google Play.
+1. Nos normes en matière d’abus sexuels et d’exploitation des enfants (CSAE)
+Nous appliquons une politique de tolérance zéro stricte à l’égard des abus sexuels et de l’exploitation des enfants. Nous interdisons tout contenu qui :
+• Représente, promeut ou sexualise des mineurs sous quelque forme que ce soit ;
+• Sollicite, encourage ou facilite un contact sexuel avec des mineurs ;
+• Contient des textes, des images ou des discussions à caractère sexuel impliquant des mineurs ;
+• Manipule, séduit ou exploite des enfants de quelque manière que ce soit.
+Toute utilisatrice qui produit, partage ou diffuse un tel contenu sera définitivement bannie, et le contenu sera retiré immédiatement.
+2. Mécanisme de signalement dans l’Application
+Nous mettons à disposition un mécanisme de signalement intégré à l’Application qui permet aux utilisatrices de signaler des contenus inappropriés ou abusifs. Les utilisatrices peuvent signaler des publications, des commentaires, des messages et d’autres contenus générés par les utilisatrices directement dans l’Application, grâce à l’option de signalement disponible sur chaque élément.
+Tous les signalements sont examinés et les mesures appropriées sont prises conformément à nos politiques et au droit applicable.
+3. Traitement des contenus d’abus sexuels sur enfants (CSAM)
+Si nous avons connaissance de contenus présumés d’abus sexuels sur enfants (CSAM), nous :
+• Retirons immédiatement le contenu et bannissons définitivement le compte responsable ;
+• Conservons les preuves pertinentes conformément aux exigences applicables ;
+• Signalons le contenu aux autorités compétentes, notamment au National Center for Missing & Exploited Children (NCMEC) et aux services de police compétents, comme la loi l’exige.
+4. Conformité aux lois sur la sécurité des enfants
+Nous respectons toutes les lois et réglementations applicables en matière de sécurité et de protection des enfants dans les juridictions où nous exerçons nos activités, y compris les obligations de signalement en matière de contenus d’abus sexuels sur enfants.
+5. Contact sécurité des enfants
+Pour toute question relative à la sécurité des enfants ou pour signaler des abus sexuels ou une exploitation présumés à l’encontre d’enfants, veuillez contacter notre équipe dédiée à la sécurité des enfants :
+E-mail : safetyfeedback@shesayllc.com
+Tous les signalements concernant la sécurité des enfants sont traités avec la plus haute priorité et la plus stricte confidentialité.

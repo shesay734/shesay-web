@@ -1,0 +1,22 @@
+SheSay ("the App") is committed to protecting children and preventing child sexual abuse and exploitation (CSAE) across our platform. This page describes our child safety standards in accordance with Google Play policy requirements.
+1. Our Standards on Child Sexual Abuse and Exploitation (CSAE)
+We have a strict zero-tolerance policy toward child sexual abuse and exploitation. We prohibit any content that:
+• Depicts, promotes, or sexualizes minors in any form;
+• Solicits, encourages, or facilitates sexual contact with minors;
+• Contains sexualized text, imagery, or discussion involving minors;
+• Grooms, entices, or exploits children in any manner.
+Any user who produces, shares, or distributes such content will be permanently banned, and the content will be removed immediately.
+2. In-App User Feedback Mechanism
+We provide an in-app reporting mechanism that allows users to flag inappropriate or abusive content. Users can report posts, comments, messages, and other user-generated content directly within the App through the reporting option available on each item.
+All reports are reviewed, and appropriate action is taken in accordance with our policies and applicable law.
+3. Handling of Child Sexual Abuse Material (CSAM)
+If we become aware of suspected child sexual abuse material (CSAM), we will:
+• Immediately remove the content and permanently ban the responsible account;
+• Preserve relevant evidence in accordance with applicable requirements;
+• Report the content to the appropriate authorities, including the National Center for Missing & Exploited Children (NCMEC) and relevant law enforcement agencies, as required by law.
+4. Compliance with Child Safety Laws
+We comply with all applicable child safety and child protection laws and regulations in the jurisdictions where we operate, including mandatory reporting obligations relating to child sexual abuse material.
+5. Child Safety Contact
+For child safety inquiries or to report suspected child sexual abuse or exploitation, please contact our dedicated child safety team at:
+Email: safetyfeedback@shesayllc.com
+We treat all child safety reports with the highest priority and confidentiality.

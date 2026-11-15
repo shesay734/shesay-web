@@ -1,0 +1,35 @@
+This Privacy Policy is provided by SheSay LLC, a Wyoming limited liability company ("SheSay," "we," "our," or "us"). It explains how we collect, use, store, share, and protect your personal information when you use the App, and how you can manage that information. Please read this policy carefully before using the App.
+1. Information We Collect
+We only collect information necessary to provide our services:
+• Account information: the phone number or email address you provide during registration or login, and the password you set.
+• Profile information: nickname, avatar, and other details you voluntarily provide.
+• User content: posts (daily moments, reports), comments, images, and photos uploaded to your gallery.
+• Interaction data: your likes, favorites, and follows.
+• Device and log information: device model, operating system version, and crash logs collected to keep the service stable and secure.
+2. How We Use Information
+• To provide registration, login, authentication, and account security;
+• To display your content and support community features;
+• To perform content moderation and maintain community standards;
+• To troubleshoot issues and improve our products and services.
+3. Data Storage and Security
+Your information is stored in the encrypted cloud database provided by Supabase, and all data transmission is protected with TLS encryption. We take reasonable technical and administrative measures to protect your information from unauthorized access, disclosure, or alteration.
+4. Information Sharing
+We do not sell your personal information to any third party. We may share your information only in the following necessary circumstances:
+• SMS verification: verification messages are sent through Twilio (integrated via Supabase);
+• Content moderation: images you upload may be submitted to Alibaba Cloud for content safety detection;
+• Legal requirements: where required by law, government authorities, or to protect public safety and legitimate rights.
+5. Your Rights
+You have the right to access, correct, and delete your personal information, and to delete your account. You can update your email and password in the "Account" section of the App. After account deletion, we will delete the personal information associated with your account.
+To request deletion of your account and associated data, please see the Delete Account and Data Request page.
+6. Data Retention and Deletion
+We retain your personal information only for as long as necessary to fulfill the purposes described in this policy. After you delete your account or content, we will delete or anonymize the relevant information, unless otherwise required by law.
+7. Children's Privacy
+The App is intended for adults. If you are a minor, please use the App only with the consent and guidance of a parent or guardian, and ask your guardian to read this policy carefully.
+8. Policy Updates
+We may update this Privacy Policy from time to time. For significant changes, we will notify you within the App. The updated policy takes effect on the date it is published.
+9. Governing Law and Dispute Resolution
+This Privacy Policy and any dispute relating to it are governed by the laws of the State of Wyoming, without regard to its conflict-of-law rules. Any dispute that cannot be resolved informally shall be resolved by final and binding arbitration seated in the State of Wyoming, unless you and SheSay LLC agree to another location in writing.
+10. Contact Us
+If you have any questions, comments, or complaints about this Privacy Policy or our privacy practices, please contact SheSay LLC at:
+Email: support@shesayllc.com
+Legal mailing address: 30 N Gould St #Ste R, Sheridan, WY 82801, USA

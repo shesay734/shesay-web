@@ -1,0 +1,35 @@
+La presente Informativa sulla privacy è fornita da SheSay LLC, società a responsabilità limitata del Wyoming («SheSay», «noi», «nostro» o «ci»). Spiega come raccogliamo, utilizziamo, conserviamo, condividiamo e proteggiamo le tue informazioni personali quando utilizzi l’app, e come puoi gestire tali informazioni. Ti invitiamo a leggere attentamente la presente informativa prima di utilizzare l’app.
+1. Informazioni che raccogliamo
+Raccogliamo solo le informazioni necessarie a fornire i nostri servizi:
+• Informazioni sull’account: il numero di telefono o l’indirizzo email forniti in fase di registrazione o accesso, e la password impostata.
+• Informazioni sul profilo: soprannome, avatar e altri dati che fornisci volontariamente.
+• Contenuti dell’utente: post (momenti quotidiani, reportage), commenti, immagini e foto caricate nella tua galleria.
+• Dati di interazione: i tuoi mi piace, i salvataggi e i follow.
+• Informazioni sul dispositivo e log: modello del dispositivo, versione del sistema operativo e log di errore raccolti per mantenere il servizio stabile e sicuro.
+2. Come utilizziamo le informazioni
+• Per fornire registrazione, accesso, autenticazione e sicurezza dell’account;
+• per mostrare i tuoi contenuti e supportare le funzioni della community;
+• per svolgere la moderazione dei contenuti e mantenere gli standard della community;
+• per risolvere problemi e migliorare i nostri prodotti e servizi.
+3. Conservazione e sicurezza dei dati
+Le tue informazioni sono conservate nel database cloud crittografato fornito da Supabase e tutte le trasmissioni di dati sono protette con crittografia TLS. Adottiamo misure tecniche e amministrative ragionevoli per proteggere le tue informazioni da accessi, divulgazioni o modifiche non autorizzati.
+4. Condivisione delle informazioni
+Non vendiamo le tue informazioni personali a terzi. Possiamo condividerle solo nelle seguenti circostanze necessarie:
+• Verifica via SMS: i messaggi di verifica sono inviati tramite Twilio (integrato tramite Supabase);
+• moderazione dei contenuti: le immagini che carichi possono essere inviate ad Alibaba Cloud per il rilevamento della sicurezza dei contenuti;
+• obblighi di legge: quando richiesto dalla legge, dalle autorità pubbliche, o per proteggere la sicurezza pubblica e i diritti legittimi.
+5. I tuoi diritti
+Hai il diritto di accedere, correggere ed eliminare le tue informazioni personali e di eliminare il tuo account. Puoi aggiornare la tua email e la tua password nella sezione «Account» dell’app. Dopo l’eliminazione dell’account, elimineremo le informazioni personali associate al tuo account.
+Per richiedere l’eliminazione del tuo account e dei dati associati, consulta la pagina Eliminazione account e richiesta dati.
+6. Conservazione ed eliminazione dei dati
+Conserviamo le tue informazioni personali solo per il tempo necessario a perseguire le finalità descritte nella presente informativa. Dopo l’eliminazione del tuo account o dei tuoi contenuti, elimineremo o anonimizzeremo le informazioni pertinenti, salvo diverso obbligo di legge.
+7. Privacy dei minori
+L’app è destinata a persone adulte. Se sei minorenne, utilizza l’app solo con il consenso e la guida di un genitore o di un tutore e chiedi al tuo tutore di leggere attentamente la presente informativa.
+8. Aggiornamenti dell’informativa
+Possiamo aggiornare la presente Informativa sulla privacy di tanto in tanto. In caso di modifiche rilevanti te ne informeremo all’interno dell’app. L’informativa aggiornata entra in vigore alla data di pubblicazione.
+9. Legge applicabile e risoluzione delle controversie
+La presente Informativa sulla privacy e qualsiasi controversia a essa relativa sono disciplinate dalle leggi dello Stato del Wyoming, indipendentemente dalle norme sul conflitto di leggi. Qualsiasi controversia che non possa essere risolta in via amichevole sarà definita mediante arbitrato definitivo e vincolante con sede nello Stato del Wyoming, salvo che tu e SheSay LLC concordiate per iscritto una diversa sede.
+10. Contatti
+Per qualsiasi domanda, commento o reclamo sulla presente Informativa sulla privacy o sulle nostre pratiche in materia di privacy, contatta SheSay LLC a:
+Email: support@shesayllc.com
+Indirizzo postale legale: 30 N Gould St #Ste R, Sheridan, WY 82801, USA

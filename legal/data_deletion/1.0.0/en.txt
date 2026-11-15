@@ -1,0 +1,19 @@
+In accordance with applicable laws and Google Play policy requirements, SheSay provides users with a way to delete their account and personal data. You may request deletion of your account and all associated personal data at any time.
+1. How to Request Deletion
+You can submit a deletion request through either of the following methods:
+• Method 1 (recommended): In the App, go to "Account" and use the "Delete Account" option, then follow the on-screen instructions.
+• Method 2: Send an email to support@shesayllc.com with the subject "Delete Account", and include the email address you used to register so we can verify your identity.
+2. Scope of Data Deletion
+Once your deletion request is verified, we will delete all data associated with your account, including but not limited to:
+• Account information (email, password, nickname, avatar);
+• Content you have published (posts, reports, comments, updates, etc.);
+• Images you have uploaded (gallery, post images, comment images, etc.);
+• Interaction data (likes, favorites, follows, etc.);
+• Chat messages (tea room messages).
+3. Processing Time
+We will complete the deletion within 7 business days after receiving and verifying your request. Once deleted, the data cannot be recovered.
+4. Retention of Certain Data
+Where required by law, or for legitimate purposes such as protecting public safety, we may retain certain necessary information in accordance with applicable regulations, but it will not be used for other purposes.
+5. Contact Us
+Deletion request email: support@shesayllc.com
+Please send your request using the email address you registered with, so we can verify your identity quickly.

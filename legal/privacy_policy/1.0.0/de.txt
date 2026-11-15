@@ -1,0 +1,35 @@
+Diese Datenschutzrichtlinie wird von SheSay LLC, einer Gesellschaft mit beschränkter Haftung nach dem Recht von Wyoming („SheSay“, „wir“, „unser“ oder „uns“), bereitgestellt. Sie erläutert, wie wir deine personenbezogenen Daten bei der Nutzung der App erheben, verwenden, speichern, weitergeben und schützen und wie du diese Daten verwalten kannst. Bitte lies diese Richtlinie sorgfältig, bevor du die App nutzt.
+1. Welche Daten wir erheben
+Wir erheben nur Daten, die für die Bereitstellung unserer Dienste erforderlich sind:
+• Kontodaten: die Telefonnummer oder E-Mail-Adresse, die du bei der Registrierung oder Anmeldung angibst, sowie das von dir festgelegte Passwort.
+• Profildaten: Spitzname, Profilbild und weitere Angaben, die du freiwillig machst.
+• Nutzerinhalte: Beiträge (Alltagsmomente, Berichte), Kommentare, Bilder und Fotos, die du in deine Galerie hochlädst.
+• Interaktionsdaten: deine Likes, Favoriten und Follows.
+• Geräte- und Protokolldaten: Gerätemodell, Version des Betriebssystems und Absturzprotokolle, die erhoben werden, um den Dienst stabil und sicher zu halten.
+2. Wie wir die Daten verwenden
+• zur Bereitstellung von Registrierung, Anmeldung, Authentifizierung und Kontosicherheit;
+• zur Anzeige deiner Inhalte und zur Unterstützung von Community-Funktionen;
+• zur Moderation von Inhalten und zur Wahrung der Community-Standards;
+• zur Fehlerbehebung und zur Verbesserung unserer Produkte und Dienste.
+3. Datenspeicherung und Sicherheit
+Deine Daten werden in der verschlüsselten Cloud-Datenbank von Supabase gespeichert, und alle Datenübertragungen sind durch TLS-Verschlüsselung geschützt. Wir treffen angemessene technische und organisatorische Maßnahmen, um deine Daten vor unbefugtem Zugriff, unbefugter Offenlegung oder Veränderung zu schützen.
+4. Weitergabe von Daten
+Wir verkaufen deine personenbezogenen Daten nicht an Dritte. Wir geben deine Daten nur in den folgenden notwendigen Fällen weiter:
+• SMS-Verifizierung: Bestätigungsnachrichten werden über Twilio (eingebunden über Supabase) versendet;
+• Moderation von Inhalten: Von dir hochgeladene Bilder können zur Prüfung der Inhaltssicherheit an Alibaba Cloud übermittelt werden;
+• gesetzliche Anforderungen: wenn dies gesetzlich, von Behörden oder zum Schutz der öffentlichen Sicherheit und berechtigter Rechte verlangt wird.
+5. Deine Rechte
+Du hast das Recht, auf deine personenbezogenen Daten zuzugreifen, sie zu berichtigen und zu löschen sowie dein Konto zu löschen. Deine E-Mail-Adresse und dein Passwort kannst du im Bereich „Konto“ der App ändern. Nach der Löschung des Kontos löschen wir die mit deinem Konto verbundenen personenbezogenen Daten.
+Informationen zur Löschung deines Kontos und der zugehörigen Daten findest du auf der Seite „Antrag auf Löschung von Konto und Daten“.
+6. Aufbewahrung und Löschung von Daten
+Wir bewahren deine personenbezogenen Daten nur so lange auf, wie es für die in dieser Richtlinie beschriebenen Zwecke erforderlich ist. Nachdem du dein Konto oder Inhalte gelöscht hast, löschen oder anonymisieren wir die betreffenden Daten, sofern gesetzlich nichts anderes vorgeschrieben ist.
+7. Datenschutz von Kindern
+Die App richtet sich an Erwachsene. Wenn du minderjährig bist, nutze die App bitte nur mit Zustimmung und unter Anleitung eines Elternteils oder Erziehungsberechtigten und bitte diese Person, diese Richtlinie sorgfältig zu lesen.
+8. Änderungen der Richtlinie
+Wir können diese Datenschutzrichtlinie von Zeit zu Zeit aktualisieren. Über wesentliche Änderungen informieren wir dich in der App. Die aktualisierte Richtlinie tritt mit dem Datum ihrer Veröffentlichung in Kraft.
+9. Anwendbares Recht und Streitbeilegung
+Diese Datenschutzrichtlinie und alle damit zusammenhängenden Streitigkeiten unterliegen dem Recht des Bundesstaates Wyoming unter Ausschluss seiner Kollisionsnormen. Streitigkeiten, die nicht einvernehmlich beigelegt werden können, werden durch ein endgültiges und verbindliches Schiedsverfahren mit Sitz im Bundesstaat Wyoming entschieden, sofern du und SheSay LLC nicht schriftlich einen anderen Ort vereinbaren.
+10. Kontakt
+Bei Fragen, Anmerkungen oder Beschwerden zu dieser Datenschutzrichtlinie oder unserem Umgang mit Daten wende dich bitte an SheSay LLC:
+E-Mail: support@shesayllc.com
+Rechtliche Postanschrift: 30 N Gould St #Ste R, Sheridan, WY 82801, USA

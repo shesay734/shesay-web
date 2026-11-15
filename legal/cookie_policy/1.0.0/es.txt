@@ -1,0 +1,11 @@
+1. Qué son las cookies
+Las cookies son pequeños archivos de texto que se guardan en tu dispositivo para recordar tus preferencias y mejorar tu experiencia.
+
+2. Cómo usamos las cookies
+Usamos cookies para: recordar tu estado de sesión, guardar tus preferencias de idioma y de tema, y analizar el uso de la app para optimizar nuestros servicios.
+
+3. Cookies de terceros
+Podemos usar servicios de terceros (como herramientas de analítica) que instalen sus propias cookies. Consulta sus políticas de privacidad.
+
+4. Tus opciones
+Puedes desactivar las cookies en los ajustes de tu dispositivo, aunque esto puede afectar al uso normal de la App. El uso continuado implica la aceptación de nuestro uso de cookies.

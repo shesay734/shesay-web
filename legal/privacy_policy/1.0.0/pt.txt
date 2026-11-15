@@ -1,0 +1,35 @@
+Esta Política de Privacidade é fornecida pela SheSay LLC, uma sociedade de responsabilidade limitada do Wyoming ("SheSay", "nós", "nosso" ou "nos"). Ela explica como coletamos, usamos, armazenamos, compartilhamos e protegemos suas informações pessoais quando você usa o App e como você pode gerenciar essas informações. Leia esta política com atenção antes de usar o App.
+1. Informações que coletamos
+Coletamos apenas as informações necessárias para prestar nossos serviços:
+• Informações da conta: o número de telefone ou endereço de e-mail que você informa no cadastro ou login e a senha que você define.
+• Informações do perfil: apelido, avatar e outros dados que você fornece voluntariamente.
+• Conteúdo do usuário: posts (momentos do dia a dia, reportagens), comentários, imagens e fotos enviadas para sua galeria.
+• Dados de interação: suas curtidas, favoritos e quem você segue.
+• Informações de dispositivo e registros: modelo do dispositivo, versão do sistema operacional e registros de falhas coletados para manter o serviço estável e seguro.
+2. Como usamos as informações
+• Para oferecer cadastro, login, autenticação e segurança da conta;
+• Para exibir seu conteúdo e oferecer recursos da comunidade;
+• Para moderar conteúdo e manter os padrões da comunidade;
+• Para solucionar problemas e melhorar nossos produtos e serviços.
+3. Armazenamento e segurança dos dados
+Suas informações são armazenadas no banco de dados em nuvem criptografado fornecido pelo Supabase, e toda a transmissão de dados é protegida com criptografia TLS. Adotamos medidas técnicas e administrativas razoáveis para proteger suas informações contra acesso, divulgação ou alteração não autorizados.
+4. Compartilhamento de informações
+Não vendemos suas informações pessoais a terceiros. Podemos compartilhar suas informações apenas nas seguintes circunstâncias necessárias:
+• Verificação por SMS: as mensagens de verificação são enviadas pelo Twilio (integrado via Supabase);
+• Moderação de conteúdo: as imagens que você envia podem ser submetidas à Alibaba Cloud para detecção de segurança de conteúdo;
+• Exigências legais: quando exigido por lei, por autoridades governamentais ou para proteger a segurança pública e direitos legítimos.
+5. Seus direitos
+Você tem o direito de acessar, corrigir e excluir suas informações pessoais e de excluir sua conta. Você pode atualizar seu e-mail e sua senha na seção "Conta" do App. Após a exclusão da conta, excluiremos as informações pessoais associadas a ela.
+Para solicitar a exclusão da sua conta e dos dados associados, consulte a página Solicitação de exclusão de conta e dados.
+6. Retenção e exclusão de dados
+Mantemos suas informações pessoais apenas pelo tempo necessário para cumprir as finalidades descritas nesta política. Depois que você excluir sua conta ou seu conteúdo, excluiremos ou anonimizaremos as informações correspondentes, salvo exigência legal em contrário.
+7. Privacidade de crianças
+O App é destinado a adultos. Se você for menor de idade, use o App apenas com o consentimento e a orientação de um dos pais ou responsável legal e peça a essa pessoa que leia esta política com atenção.
+8. Atualizações da política
+Podemos atualizar esta Política de Privacidade periodicamente. Em caso de mudanças significativas, avisaremos você no App. A política atualizada entra em vigor na data de sua publicação.
+9. Lei aplicável e resolução de disputas
+Esta Política de Privacidade e qualquer disputa relacionada a ela são regidas pelas leis do Estado do Wyoming, sem considerar suas normas de conflito de leis. Qualquer disputa que não possa ser resolvida informalmente será resolvida por arbitragem final e vinculante com sede no Estado do Wyoming, salvo se você e a SheSay LLC concordarem por escrito com outro local.
+10. Fale conosco
+Se você tiver dúvidas, comentários ou reclamações sobre esta Política de Privacidade ou nossas práticas de privacidade, entre em contato com a SheSay LLC:
+E-mail: support@shesayllc.com
+Endereço postal legal: 30 N Gould St #Ste R, Sheridan, WY 82801, USA

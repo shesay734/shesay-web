@@ -1,0 +1,22 @@
+SheSay (l’«App») si impegna a proteggere i minori e a prevenire l’abuso e lo sfruttamento sessuale dei minori (CSAE) su tutta la nostra piattaforma. Questa pagina descrive i nostri standard per la sicurezza dei minori in conformità ai requisiti delle politiche di Google Play.
+1. I nostri standard su abuso e sfruttamento sessuale dei minori (CSAE)
+Applichiamo una rigorosa politica di tolleranza zero verso l’abuso e lo sfruttamento sessuale dei minori. Vietiamo qualsiasi contenuto che:
+• rappresenti, promuova o sessualizzi i minori in qualsiasi forma;
+• solleciti, incoraggi o faciliti contatti sessuali con minori;
+• contenga testi, immagini o discussioni a carattere sessuale che coinvolgono minori;
+• adeschi, attiri o sfrutti bambini in qualsiasi modo.
+Qualsiasi utente che produca, condivida o diffonda tali contenuti sarà bandita in modo permanente e i contenuti saranno rimossi immediatamente.
+2. Meccanismo di feedback nell’app
+Mettiamo a disposizione un meccanismo di segnalazione all’interno dell’app che consente alle utenti di segnalare contenuti inappropriati o abusivi. Le utenti possono segnalare post, commenti, messaggi e altri contenuti generati dagli utenti direttamente nell’App tramite l’opzione di segnalazione disponibile su ogni elemento.
+Tutte le segnalazioni vengono esaminate e vengono adottate le misure appropriate in conformità alle nostre politiche e alla legge applicabile.
+3. Gestione del materiale di abuso sessuale su minori (CSAM)
+Se veniamo a conoscenza di sospetto materiale di abuso sessuale su minori (CSAM):
+• rimuoviamo immediatamente il contenuto e bandiamo in modo permanente l’account responsabile;
+• conserviamo le prove pertinenti in conformità ai requisiti applicabili;
+• segnaliamo il contenuto alle autorità competenti, tra cui il National Center for Missing & Exploited Children (NCMEC) e le pertinenti forze dell’ordine, come richiesto dalla legge.
+4. Conformità alle leggi sulla sicurezza dei minori
+Rispettiamo tutte le leggi e i regolamenti applicabili in materia di sicurezza e protezione dei minori nelle giurisdizioni in cui operiamo, compresi gli obblighi di segnalazione obbligatoria relativi al materiale di abuso sessuale su minori.
+5. Contatto per la sicurezza dei minori
+Per domande sulla sicurezza dei minori o per segnalare sospetti casi di abuso o sfruttamento sessuale di minori, contatta il nostro team dedicato alla sicurezza dei minori a:
+Email: safetyfeedback@shesayllc.com
+Trattiamo tutte le segnalazioni sulla sicurezza dei minori con la massima priorità e riservatezza.

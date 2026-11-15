@@ -1,7 +1,9 @@
 window.SheSay = (() => {
   const url = 'https://suxprwbmoakcbopjuosa.supabase.co';
   const key = 'sb_publishable_JsggCmnvB1Q50l5z2W11Uw_AfKLxCx7';
-  const client = window.supabase.createClient(url, key);
+  // Pages without the Supabase library (the legal pages) still need the
+  // language picker below, so a missing library must not stop this file.
+  const client = window.supabase ? window.supabase.createClient(url, key) : null;
   const fusionUrl = `${url}/functions/v1/fusion-auth`;
 
   async function fusion(action, payload = {}, accessToken = null) {
@@ -79,6 +81,32 @@ window.SheSay = (() => {
     throw error;
   }
 
+  // The app's in-app browser signs the member in here as well: it passes
+  // the account id and its access token, which is used once to get a
+  // one-time sign-in token for a separate web session (the app's own
+  // session is never copied). With no id the app is signed out, and so is
+  // this page.
+  let appSignIn = null;
+  async function signInFromApp(userId, accessToken) {
+    if (!client) return;
+    const { data: { session } } = await client.auth.getSession();
+    if (!userId) {
+      if (session) await client.auth.signOut({ scope: 'local' });
+      return;
+    }
+    if (session?.user?.id === userId) return;
+    if (session) await client.auth.signOut({ scope: 'local' });
+    const { tokenHash } = await fusion('webSession', {}, accessToken);
+    const { error } = await client.auth.verifyOtp({ token_hash: tokenHash, type: 'magiclink' });
+    if (error) throw error;
+  }
+  window.SheSayAppSignIn = (userId, accessToken) => {
+    appSignIn ??= signInFromApp(userId, accessToken)
+      .catch((error) => console.warn('App sign-in failed:', error))
+      .finally(() => { appSignIn = null; });
+    return appSignIn;
+  };
+
   return { client, fusion, sendCode, humanPass };
 })();
 
@@ -91,7 +119,10 @@ window.SheSay = (() => {
   const supported = value => i18n.languages.some(([code]) => code === value);
   let saved = null;
   try { saved = localStorage.getItem(key); } catch (_) {}
-  const preferred = saved || (navigator.language || 'en').split('-')[0];
+  // ?lang=xx (the app opens pages in its own language) comes first.
+  const requested = new URLSearchParams(location.search).get('lang');
+  const preferred = (requested && supported(requested) ? requested : null)
+    || saved || (navigator.language || 'en').split('-')[0];
   const initial = supported(preferred) ? preferred : 'en';
   i18n.setLocale(initial);
   function mount() {

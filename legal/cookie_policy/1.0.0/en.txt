@@ -1,0 +1,11 @@
+1. What are Cookies
+Cookies are small text files stored on your device to remember your preferences and improve your experience.
+
+2. How We Use Cookies
+We use cookies to: remember your login status, save your language and theme preferences, and analyze app usage to optimize our services.
+
+3. Third-Party Cookies
+We may use third-party services (such as analytics tools) that may set their own cookies. Please refer to their privacy policies.
+
+4. Your Choices
+You can disable cookies in your device settings, but this may affect normal use of the App. Continued use constitutes acceptance of our use of cookies.

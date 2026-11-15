@@ -437,3 +437,15 @@ input:not([type=checkbox]):not([type=radio]):focus, textarea:focus, select:focus
 .company-pill, .story-tag { background:var(--violet-soft); color:var(--violet-deep); }
 .button, .download-btn, .corporate-button, .corporate-nav-cta, .button.ghost, .auth-btn, .corporate-button-light { line-height:1.2; }
 .auth-stage > .site-language { display:flex; justify-content:flex-end; margin:0 0 8px; }
+
+/* Legal pages: banner on an earlier version, and the version history list. */
+.legal-old-version { margin:16px 0 0; padding:12px 14px; border-radius:12px; background:var(--violet-soft); color:var(--plum); font-size:14px; }
+.legal-history { margin:18px 0 0; padding:0; list-style:none; }
+.legal-history li { display:flex; justify-content:space-between; align-items:center; gap:12px; padding:14px 0; border-top:1px solid var(--line); }
+.legal-history li:first-child { border-top:0; }
+.legal-history .tag { padding:2px 8px; border-radius:10px; background:var(--violet-soft); color:var(--violet-deep); font-size:12px; font-weight:600; }
+.legal-records { margin:32px 0 0; padding-top:20px; border-top:1px solid var(--line); }
+.legal-records ul { margin:12px 0 0; padding:0; list-style:none; }
+.legal-records li { padding:6px 0; font-size:14px; }
+.consent-row { display:flex; align-items:flex-start; gap:10px; margin:18px 0 0; font-size:13px; font-weight:400; line-height:1.55; color:var(--muted); }
+.consent-row input { flex:none; width:18px; min-height:0; height:18px; margin:2px 0 0; padding:0; accent-color:var(--violet); }

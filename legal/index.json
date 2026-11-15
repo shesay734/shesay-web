@@ -1,0 +1,281 @@
+{
+  "_readme": "Legal documents. To publish a new version: add legal/<key>/<version>/<locale>.txt for every language, add the version at the top of its \"versions\" list (version, published date, titles, locales) and set \"current\". Format: \"1. Heading\" lines are headings, \"• item\" lines are list items, other lines are paragraphs. Older versions stay as they are (version history).",
+  "documents": {
+    "user_agreement": {
+      "page": "terms-of-service.html",
+      "current": "1.0.0",
+      "versions": [
+        {
+          "version": "1.0.0",
+          "published": "2026-10-25",
+          "titles": {
+            "en": "Terms of Service",
+            "zh": "用户协议",
+            "es": "Términos del servicio",
+            "fr": "Conditions d’utilisation",
+            "it": "Termini di servizio",
+            "de": "Nutzungsbedingungen",
+            "ja": "利用規約",
+            "pt": "Termos de Serviço"
+          },
+          "locales": [
+            "de",
+            "en",
+            "es",
+            "fr",
+            "it",
+            "ja",
+            "pt",
+            "zh"
+          ]
+        }
+      ]
+    },
+    "privacy_policy": {
+      "page": "privacy-policy.html",
+      "current": "1.0.0",
+      "versions": [
+        {
+          "version": "1.0.0",
+          "published": "2026-10-25",
+          "titles": {
+            "en": "Privacy Policy",
+            "zh": "隐私政策",
+            "es": "Política de privacidad",
+            "fr": "Politique de confidentialité",
+            "it": "Informativa sulla privacy",
+            "de": "Datenschutzrichtlinie",
+            "ja": "プライバシーポリシー",
+            "pt": "Política de Privacidade"
+          },
+          "locales": [
+            "de",
+            "en",
+            "es",
+            "fr",
+            "it",
+            "ja",
+            "pt",
+            "zh"
+          ]
+        }
+      ]
+    },
+    "cookie_policy": {
+      "page": "cookie-policy.html",
+      "current": "1.0.0",
+      "versions": [
+        {
+          "version": "1.0.0",
+          "published": "2026-10-25",
+          "titles": {
+            "en": "Cookie Policy",
+            "zh": "Cookie使用条款",
+            "es": "Política de cookies",
+            "fr": "Politique relative aux cookies",
+            "it": "Informativa sui cookie",
+            "de": "Cookie-Richtlinie",
+            "ja": "Cookieポリシー",
+            "pt": "Política de Cookies"
+          },
+          "locales": [
+            "de",
+            "en",
+            "es",
+            "fr",
+            "it",
+            "ja",
+            "pt",
+            "zh"
+          ]
+        }
+      ]
+    },
+    "dmca_notice": {
+      "page": "dmca-notice.html",
+      "current": "1.0.0",
+      "versions": [
+        {
+          "version": "1.0.0",
+          "published": "2026-10-25",
+          "titles": {
+            "en": "DMCA Notice",
+            "zh": "DMCA Notice（版权声明）",
+            "es": "Aviso DMCA",
+            "fr": "Avis DMCA",
+            "it": "Avviso DMCA",
+            "de": "DMCA-Hinweis",
+            "ja": "DMCA通知",
+            "pt": "Aviso DMCA"
+          },
+          "locales": [
+            "de",
+            "en",
+            "es",
+            "fr",
+            "it",
+            "ja",
+            "pt",
+            "zh"
+          ]
+        }
+      ]
+    },
+    "author_terms": {
+      "page": "author-terms.html",
+      "current": "1.3.0",
+      "versions": [
+        {
+          "version": "1.3.0",
+          "published": "2026-11-15",
+          "titles": {
+            "de": "Nutzungsbedingungen für Autorinnen",
+            "en": "Author Terms of Service",
+            "es": "Términos del servicio para autores",
+            "fr": "Conditions d’utilisation des auteurs",
+            "it": "Termini di servizio per autori",
+            "ja": "作者向け利用規約",
+            "pt": "Termos de Serviço para Autoras",
+            "zh": "作者服务条款"
+          },
+          "locales": [
+            "de",
+            "en",
+            "es",
+            "fr",
+            "it",
+            "ja",
+            "pt",
+            "zh"
+          ]
+        },
+        {
+          "version": "1.2.0",
+          "published": "2026-11-07",
+          "titles": {
+            "de": "Nutzungsbedingungen für Autorinnen",
+            "en": "Author Terms of Service",
+            "es": "Términos del servicio para autores",
+            "fr": "Conditions d’utilisation des auteurs",
+            "it": "Termini di servizio per autori",
+            "ja": "作者向け利用規約",
+            "pt": "Termos de Serviço para Autoras",
+            "zh": "作者服务条款"
+          },
+          "locales": [
+            "de",
+            "en",
+            "es",
+            "fr",
+            "it",
+            "ja",
+            "pt",
+            "zh"
+          ]
+        },
+        {
+          "version": "1.1.0",
+          "published": "2026-11-07",
+          "titles": {
+            "en": "Author Terms of Service",
+            "es": "Términos del servicio para autores",
+            "fr": "Conditions d’utilisation des auteurs",
+            "it": "Termini di servizio per autori",
+            "zh": "作者服务条款",
+            "de": "Nutzungsbedingungen für Autorinnen",
+            "ja": "作者向け利用規約",
+            "pt": "Termos de Serviço para Autoras"
+          },
+          "locales": [
+            "de",
+            "en",
+            "es",
+            "fr",
+            "it",
+            "ja",
+            "pt",
+            "zh"
+          ]
+        },
+        {
+          "version": "1.0.0",
+          "published": "2026-10-25",
+          "titles": {
+            "en": "Author Terms of Service",
+            "zh": "作者服务条款",
+            "es": "Términos del servicio para autores",
+            "fr": "Conditions d’utilisation des auteurs",
+            "it": "Termini di servizio per autori"
+          },
+          "locales": [
+            "en",
+            "es",
+            "fr",
+            "it",
+            "zh"
+          ]
+        }
+      ]
+    },
+    "child_safety": {
+      "page": "child-safety-standards.html",
+      "current": "1.0.0",
+      "versions": [
+        {
+          "version": "1.0.0",
+          "published": "2026-10-25",
+          "titles": {
+            "en": "Child Safety Standards",
+            "zh": "儿童安全标准",
+            "es": "Normas de seguridad infantil",
+            "fr": "Normes de sécurité des enfants",
+            "it": "Standard per la sicurezza dei minori",
+            "de": "Standards zum Schutz von Kindern",
+            "ja": "児童の安全に関する基準",
+            "pt": "Padrões de segurança infantil"
+          },
+          "locales": [
+            "de",
+            "en",
+            "es",
+            "fr",
+            "it",
+            "ja",
+            "pt",
+            "zh"
+          ]
+        }
+      ]
+    },
+    "data_deletion": {
+      "page": "data-deletion.html",
+      "current": "1.0.0",
+      "versions": [
+        {
+          "version": "1.0.0",
+          "published": "2026-10-25",
+          "titles": {
+            "en": "Delete Account and Data Request",
+            "zh": "删除账号与数据申请",
+            "es": "Eliminación de cuenta y solicitud de datos",
+            "fr": "Suppression de compte et demande de données",
+            "it": "Eliminazione account e richiesta dati",
+            "de": "Antrag auf Löschung von Konto und Daten",
+            "ja": "アカウントおよびデータの削除依頼",
+            "pt": "Solicitação de exclusão de conta e dados"
+          },
+          "locales": [
+            "de",
+            "en",
+            "es",
+            "fr",
+            "it",
+            "ja",
+            "pt",
+            "zh"
+          ]
+        }
+      ]
+    }
+  }
+}

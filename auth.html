@@ -54,6 +54,11 @@
           <p id="registrationNote" class="auth-note">The code confirms email ownership. If this email already has an account, you can keep it or permanently delete it before creating a new one.</p>
         </div>
 
+        <label class="consent-row" for="consent">
+          <input id="consent" type="checkbox">
+          <span>I have read and agree to: <a href="terms-of-service.html" target="_blank" rel="noopener">Terms of Service</a> · <a href="privacy-policy.html" target="_blank" rel="noopener">Privacy Policy</a> · <a href="cookie-policy.html" target="_blank" rel="noopener">Cookie Policy</a> · <a href="dmca-notice.html" target="_blank" rel="noopener">DMCA Notice</a></span>
+        </label>
+
         <button id="submit" class="button auth-submit" type="submit">Log in and open wallet</button>
       </form>
       <div id="notice" class="notice" aria-live="polite"></div>
@@ -68,6 +73,7 @@
   <nav class="policy-links" aria-label="Policies and support"><a href="index.html">Company</a><a href="app.html">Download</a><a href="legal.html">All terms &amp; policies</a><a href="terms-of-service.html">Terms of Service</a><a href="author-terms.html">Author Terms of Service</a><a href="privacy-policy.html">Privacy Policy</a><a href="cookie-policy.html">Cookie Policy</a><a href="dmca-notice.html">DMCA Notice</a><a href="child-safety-standards.html">Child Safety Standards</a><a href="data-deletion.html">Account &amp; Data Deletion</a><a href="refund-policy.html">Refund Policy</a><a href="help-feedback.html">Help &amp; feedback</a></nav></main>
 
   <script src="i18n.js"></script>
+  <script src="legal-common.js"></script>
   <script src="site.js"></script>
   <script>
     const $ = id => document.getElementById(id);
@@ -231,6 +237,35 @@
         if (profileError) throw profileError;
       }
     }
+    // The terms and policies accepted on this page, recorded against the
+    // versions published on this website (the same records as the app).
+    const loginDocuments = ['user_agreement', 'privacy_policy', 'cookie_policy', 'dmca_notice'];
+    async function recordConsent() {
+      try {
+        // Make sure the server holds the versions the website shows now.
+        await fetch(`${'https://suxprwbmoakcbopjuosa.supabase.co'}/functions/v1/legal-sync`, { method: 'POST' }).catch(() => {});
+        const index = await SheSayLegal.index();
+        const documents = {};
+        for (const key of loginDocuments) documents[key] = index.documents[key].current;
+        const { data, error } = await sb.rpc('select_legal_terms', {
+          target_context: 'login', target_documents: documents, target_locale: SheSayLegal.locale(),
+        });
+        if (error) throw error;
+        const { error: confirmError } = await sb.rpc('confirm_legal_terms', { selection_id: data.id });
+        if (confirmError) throw confirmError;
+      } catch (error) {
+        console.warn('Consent could not be recorded', error);
+      }
+    }
+    async function finish() {
+      await recordConsent();
+      location.replace(returnTo);
+    }
+    function consentGiven() {
+      if ($('consent').checked) return true;
+      showNotice('Agree to the terms and policies first.', 'error');
+      return false;
+    }
     async function verifyRegistration() {
       registrationValuesValid();
       if (!challengeId) throw new Error('Send an email verification code first.');
@@ -249,7 +284,7 @@
         return;
       }
       await setProfile();
-      location.replace(returnTo);
+      await finish();
     }
     async function sendCode() {
       const email = $('email').value.trim();
@@ -282,7 +317,7 @@
       if (!code) throw new Error('Enter the email verification code.');
       const { error } = await sb.auth.verifyOtp({ email, token: code, type: 'email' });
       if (error) throw error;
-      location.replace(returnTo);
+      await finish();
     }
     $('loginTab').onclick = () => setMode('login');
     $('passwordLoginTab').onclick = () => setMode('login');
@@ -295,6 +330,7 @@
     };
     $('form').onsubmit = async event => {
       event.preventDefault();
+      if (!consentGiven()) return;
       const button = $('submit'); button.disabled = true;
       showNotice('Processing securely…');
       try {
@@ -305,7 +341,7 @@
             options: { captchaToken: token },
           });
           if (error) throw error;
-          location.replace(returnTo);
+          await finish();
         } else if (mode === 'otp') {
           await verifyOtpLogin();
         } else {
@@ -319,7 +355,7 @@
         updateGates();
       }
     };
-    $('keepAccount').onclick = () => location.replace(returnTo);
+    $('keepAccount').onclick = () => finish();
     $('replaceAccount').onclick = async () => {
       if (!verifiedSession || !confirm(SheSayI18n.t('Delete the original account and all data to create a new account? This cannot be undone.'))) return;
       if (!captchaToken) {
@@ -338,7 +374,7 @@
           options: { captchaToken: token },
         });
         if (error) throw error;
-        location.replace(returnTo);
+        await finish();
       } catch (error) {
         showNotice(error.message || 'Could not create the new account. Please complete the verification again and retry.', 'error');
       }

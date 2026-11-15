@@ -1,0 +1,35 @@
+La présente Politique de confidentialité est fournie par SheSay LLC, société à responsabilité limitée du Wyoming (« SheSay », « nous », « notre »). Elle explique comment nous collectons, utilisons, stockons, partageons et protégeons vos informations personnelles lorsque vous utilisez l’Application, ainsi que la manière dont vous pouvez gérer ces informations. Veuillez lire attentivement cette politique avant d’utiliser l’Application.
+1. Informations que nous collectons
+Nous ne collectons que les informations nécessaires à la fourniture de nos services :
+• Informations de compte : le numéro de téléphone ou l’adresse e-mail que vous fournissez lors de l’inscription ou de la connexion, ainsi que le mot de passe que vous définissez.
+• Informations de profil : pseudonyme, avatar et autres détails que vous fournissez volontairement.
+• Contenu de l’utilisatrice : publications (moments quotidiens, reportages), commentaires, images et photos téléversées dans votre galerie.
+• Données d’interaction : vos mentions J’aime, favoris et abonnements.
+• Informations sur l’appareil et journaux : modèle d’appareil, version du système d’exploitation et journaux de plantage collectés pour maintenir la stabilité et la sécurité du service.
+2. Comment nous utilisons les informations
+• Pour assurer l’inscription, la connexion, l’authentification et la sécurité du compte ;
+• Pour afficher votre contenu et prendre en charge les fonctionnalités communautaires ;
+• Pour effectuer la modération du contenu et maintenir les normes communautaires ;
+• Pour résoudre les problèmes et améliorer nos produits et services.
+3. Stockage et sécurité des données
+Vos informations sont stockées dans la base de données cloud chiffrée fournie par Supabase, et toutes les transmissions de données sont protégées par le chiffrement TLS. Nous prenons des mesures techniques et administratives raisonnables pour protéger vos informations contre tout accès, divulgation ou modification non autorisés.
+4. Partage des informations
+Nous ne vendons pas vos informations personnelles à des tiers. Nous pouvons partager vos informations uniquement dans les circonstances nécessaires suivantes :
+• Vérification par SMS : les messages de vérification sont envoyés via Twilio (intégré via Supabase) ;
+• Modération du contenu : les images que vous téléversez peuvent être soumises à Alibaba Cloud pour détection de sécurité du contenu ;
+• Exigences légales : lorsque la loi ou les autorités gouvernementales l’exigent, ou pour protéger la sécurité publique et les droits légitimes.
+5. Vos droits
+Vous avez le droit d’accéder à vos informations personnelles, de les corriger et de les supprimer, ainsi que de supprimer votre compte. Vous pouvez mettre à jour votre e-mail et votre mot de passe dans la section « Compte » de l’Application. Après la suppression du compte, nous supprimerons les informations personnelles associées à votre compte.
+Pour demander la suppression de votre compte et des données associées, veuillez consulter la page Suppression de compte et demande de données.
+6. Conservation et suppression des données
+Nous conservons vos informations personnelles uniquement pendant la durée nécessaire à la réalisation des finalités décrites dans la présente politique. Après la suppression de votre compte ou de votre contenu, nous supprimerons ou anonymiserons les informations concernées, sauf si la loi en dispose autrement.
+7. Confidentialité des enfants
+L’Application est destinée aux adultes. Si vous êtes mineure, veuillez n’utiliser l’Application qu’avec le consentement et sous la conduite d’un parent ou d’un tuteur, et demandez à votre tuteur de lire attentivement cette politique.
+8. Mises à jour de la politique
+Nous pouvons mettre à jour la présente Politique de confidentialité de temps à autre. En cas de modifications importantes, nous vous en informerons dans l’Application. La politique mise à jour prend effet à la date de sa publication.
+9. Droit applicable et résolution des litiges
+La présente Politique de confidentialité et tout litige s’y rapportant sont régis par les lois de l’État du Wyoming, sans égard aux règles de conflit de lois. Tout litige qui ne peut être résolu à l’amiable sera tranché par un arbitrage définitif et contraignant siégeant dans l’État du Wyoming, sauf si vous et SheSay LLC convenez par écrit d’un autre lieu.
+10. Nous contacter
+Si vous avez des questions, des commentaires ou des réclamations concernant la présente Politique de confidentialité ou nos pratiques en matière de confidentialité, veuillez contacter SheSay LLC à l’adresse suivante :
+E-mail : support@shesayllc.com
+Adresse postale juridique : 30 N Gould St #Ste R, Sheridan, WY 82801, USA
