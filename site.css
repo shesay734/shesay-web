@@ -449,3 +449,7 @@ input:not([type=checkbox]):not([type=radio]):focus, textarea:focus, select:focus
 .legal-records li { padding:6px 0; font-size:14px; }
 .consent-row { display:flex; align-items:flex-start; gap:10px; margin:18px 0 0; font-size:13px; font-weight:400; line-height:1.55; color:var(--muted); }
 .consent-row input { flex:none; width:18px; min-height:0; height:18px; margin:2px 0 0; padding:0; accent-color:var(--violet); }
+
+/* Legal pages: plain document on the page, no card around the text. */
+.site-shell > .paper { padding:24px 0 0; border:0; border-radius:0; background:transparent; box-shadow:none; }
+.site-shell .legal-old-version { padding:0; border-radius:0; background:transparent; }
