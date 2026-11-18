@@ -285,7 +285,7 @@
 "Request failed. Please try again.",
 "Too many code requests. Please try again in an hour.",
 "You've reached today's code limit. Please try again tomorrow.",
-"Code requests from this device or network are paused for 30 days because of unusual activity.",
+"Code requests from this device are paused for 30 days because of unusual activity.",
 "Sign out failed. Please try again.",
 "Subscribe to publication",
 "Subscribe to update",
