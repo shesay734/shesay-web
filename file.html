@@ -1,0 +1,235 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <link rel="icon" type="image/png" href="app-icon.png">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="color-scheme" content="light">
+  <meta name="robots" content="noindex">
+  <title>SheSay · Shared files</title>
+  <meta name="theme-color" content="#f9f9f9">
+  <link rel="stylesheet" href="site.css">
+  <link rel="stylesheet" href="share.css">
+  <style>
+    .share-files .content { padding: clamp(22px, 5vw, 40px); }
+    .share-files .owner { display: flex; align-items: center; gap: 10px; margin: 0 0 18px; color: var(--muted); font-size: 13px; }
+    .share-files .owner img { width: 32px; height: 32px; border-radius: 50%; object-fit: cover; background: #eee; }
+    .share-files .path { display: flex; flex-wrap: wrap; gap: 4px; margin: 0 0 12px; font-size: 13px; color: var(--muted); }
+    .share-files .path button { padding: 0; border: 0; background: none; color: #111; font: inherit; cursor: pointer; }
+    .share-files .path button:disabled { color: var(--muted); cursor: default; }
+    .share-files ul { list-style: none; margin: 0; padding: 0; }
+    .share-files li { border-top: 1px solid var(--line); }
+    .share-files li:first-child { border-top: 0; }
+    .share-files .row { display: flex; align-items: center; gap: 12px; width: 100%; min-height: 56px; padding: 8px 0; border: 0; background: none; color: #111; font: inherit; text-align: left; cursor: pointer; }
+    .share-files .icon { flex: none; display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; border-radius: 10px; background: #f3eafd; color: #a04af7; font-size: 11px; font-weight: 750; overflow: hidden; }
+    .share-files .icon img { width: 100%; height: 100%; object-fit: cover; }
+    .share-files .name { flex: 1; min-width: 0; overflow-wrap: anywhere; font-size: 15px; }
+    .share-files .size { flex: none; color: var(--muted); font-size: 12px; }
+    .share-files .empty { padding: 28px 0; color: var(--muted); text-align: center; }
+    .viewer { margin-top: 18px; }
+    .viewer h1 { font-size: clamp(20px, 3.4vw, 28px); margin: 0 0 16px; }
+    .viewer .actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 20px; }
+    .viewer .actions a, .viewer .actions button { flex: 1; min-width: 140px; display: flex; align-items: center; justify-content: center; }
+    .viewer .back { margin: 0 0 14px; padding: 0; border: 0; background: none; color: #111; font: inherit; font-size: 13px; cursor: pointer; }
+    .preview { border: 1px solid var(--line); border-radius: 16px; background: #fafafa; overflow: auto; max-height: 75vh; }
+    .preview img { display: block; max-width: 100%; height: auto; margin: auto; }
+    .preview canvas { display: block; max-width: 100%; height: auto; margin: 0 auto 8px; background: #fff; }
+    .preview pre { margin: 0; padding: 16px; white-space: pre-wrap; overflow-wrap: anywhere; font-size: 13px; line-height: 1.6; }
+    .preview table { border-collapse: collapse; font-size: 13px; background: #fff; }
+    .preview td, .preview th { border: 1px solid #e0e0e0; padding: 6px 8px; max-width: 240px; vertical-align: top; overflow-wrap: anywhere; }
+    .preview tr:first-child td { background: #f5f5f5; font-weight: 700; }
+    .preview .doc { padding: 16px 20px; background: #fff; font-size: 15px; line-height: 1.7; overflow-wrap: anywhere; }
+    .preview .doc img { max-width: 100%; }
+    .preview .note { padding: 40px 20px; text-align: center; color: var(--muted); }
+    .progress { position: fixed; top: 0; left: 0; height: 3px; width: 0; background: linear-gradient(90deg, #cd82fb, #b766fa, #a04af7); z-index: 50; transition: width .15s; }
+  </style>
+</head>
+<body class="share-page share-files">
+  <div id="progress" class="progress" hidden></div>
+  <main class="share-shell">
+    <a class="share-skip" href="#share-content">Skip to content</a>
+    <header class="share-header">
+      <a class="share-brand" href="app.html"><img src="app-icon.png" alt="" width="40" height="40"><span>SheSay<small>Stories. Connections. Community.</small></span></a>
+      <a class="share-explore" href="app.html">Discover SheSay <span aria-hidden="true">↗</span></a>
+    </header>
+    <div id="share-content" tabindex="-1"></div>
+    <section id="card" class="card hidden">
+      <div class="content">
+        <p class="eyebrow">SHARED FILES</p>
+        <p id="owner" class="owner"></p>
+        <div id="list">
+          <nav id="path" class="path" aria-label="Folder"></nav>
+          <ul id="items"></ul>
+        </div>
+        <div id="viewer" class="viewer hidden">
+          <button id="back" class="back" type="button">← Back</button>
+          <h1 id="fileName"></h1>
+          <div id="preview" class="preview"></div>
+          <div class="actions">
+            <a id="download" class="open" href="#" download>Download</a>
+          </div>
+        </div>
+      </div>
+    </section>
+    <div id="status" class="status" role="status" aria-live="polite">Loading files…</div>
+    <aside class="share-discover" aria-label="Discover SheSay"><img src="app-icon.png" alt="" width="44" height="44"><div><strong>Save these files to your Cloud Storage.</strong><p>Open the link in the SheSay app to save files to your own storage.</p></div><a href="app.html">Get the app <span aria-hidden="true">↗</span></a></aside>
+    <footer class="share-footer"><span>Shared on SheSay</span><nav aria-label="Footer"><a href="help-feedback.html">Help</a><a href="privacy-policy.html">Privacy</a><a href="terms-of-service.html">Terms</a></nav></footer>
+  </main>
+  <script src="i18n.js"></script>
+  <script src="site.js"></script>
+  <script>
+    const api = 'https://media.shesayllc.com/api/share/';
+    const token = (new URLSearchParams(location.search).get('s') || '').trim();
+    const $ = id => document.getElementById(id);
+    const status = $('status'), card = $('card');
+    const safeUrl = value => { try { const u = new URL(value); return u.protocol === 'https:' ? u.href : ''; } catch (_) { return ''; } };
+    const ext = name => { const i = name.lastIndexOf('.'); return i < 0 ? '' : name.slice(i + 1).toLowerCase(); };
+    const isImage = f => (f.kind || 'image') === 'image';
+    const nameOf = f => f.name || 'File';
+    const formatBytes = n => { n = Number(n) || 0; if (n < 1024) return n + ' B'; const u = ['KB', 'MB', 'GB']; let i = -1; do { n /= 1024; i++; } while (n >= 1024 && i < u.length - 1); return n.toFixed(n < 10 ? 1 : 0) + ' ' + u[i]; };
+    const kindOf = name => ({ pdf: 'pdf', txt: 'text', md: 'text', log: 'text', json: 'text', xml: 'text', csv: 'table', tsv: 'table', xlsx: 'table', xls: 'table', ods: 'table', docx: 'docx' })[ext(name)] || null;
+    const scripts = {};
+    const loadScript = src => scripts[src] ||= new Promise((ok, fail) => { const s = document.createElement('script'); s.src = src; s.onload = ok; s.onerror = fail; document.head.appendChild(s); });
+    const PDFJS = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js';
+    const PDFJS_WORKER = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+    const SHEETJS = 'https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js';
+    const MAMMOTH = 'https://cdn.jsdelivr.net/npm/mammoth@1.6.0/mammoth.browser.min.js';
+
+    let share = null, path = [];
+
+    // Downloads with the purple bar at the top following the progress.
+    async function fetchBytes(url) {
+      const bar = $('progress');
+      bar.hidden = false; bar.style.width = '2%';
+      try {
+        const res = await fetch(url);
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        const total = Number(res.headers.get('content-length')) || 0;
+        const reader = res.body.getReader();
+        const parts = []; let got = 0;
+        for (;;) {
+          const { done, value } = await reader.read();
+          if (done) break;
+          parts.push(value); got += value.length;
+          if (total) bar.style.width = Math.min(100, got / total * 100) + '%';
+        }
+        const out = new Uint8Array(got); let at = 0;
+        for (const p of parts) { out.set(p, at); at += p.length; }
+        return out;
+      } finally { bar.style.width = '100%'; setTimeout(() => { bar.hidden = true; bar.style.width = '0'; }, 250); }
+    }
+
+    function icon(file) {
+      const box = document.createElement('span'); box.className = 'icon';
+      if (file === 'folder') { box.textContent = '📁'; box.style.fontSize = '20px'; return box; }
+      if (isImage(file) && safeUrl(file.url)) { const img = document.createElement('img'); img.src = file.url; img.alt = ''; img.loading = 'lazy'; box.appendChild(img); return box; }
+      box.textContent = (ext(nameOf(file)) || 'file').slice(0, 4).toUpperCase();
+      return box;
+    }
+
+    function row(label, iconEl, size, onClick) {
+      const li = document.createElement('li');
+      const b = document.createElement('button'); b.type = 'button'; b.className = 'row'; b.onclick = onClick;
+      const n = document.createElement('span'); n.className = 'name'; n.textContent = label;
+      b.append(iconEl, n);
+      if (size) { const s = document.createElement('span'); s.className = 'size'; s.textContent = size; b.appendChild(s); }
+      li.appendChild(b); return li;
+    }
+
+    function renderList() {
+      $('viewer').classList.add('hidden'); $('list').classList.remove('hidden');
+      const folderId = path.length ? path[path.length - 1].id : null;
+      const nav = $('path'); nav.replaceChildren();
+      const crumbs = [{ id: null, name: 'Shared files' }, ...path];
+      crumbs.forEach((c, i) => {
+        if (i) nav.append(' / ');
+        const b = document.createElement('button'); b.type = 'button'; b.textContent = c.name;
+        b.disabled = i === crumbs.length - 1;
+        b.onclick = () => { path = path.slice(0, i); renderList(); };
+        nav.appendChild(b);
+      });
+      const roots = new Set(share.root_folder_ids || []);
+      const folders = (share.folders || []).filter(f => folderId ? f.parent_id === folderId : roots.has(f.id));
+      const files = (share.files || []).filter(f => (f.folder_id || null) === folderId);
+      const ul = $('items'); ul.replaceChildren();
+      for (const f of folders) ul.appendChild(row(f.name || 'Folder', icon('folder'), '', () => { path.push({ id: f.id, name: f.name || 'Folder' }); renderList(); }));
+      for (const f of files) ul.appendChild(row(nameOf(f), icon(f), formatBytes(f.size_bytes), () => openFile(f)));
+      if (!folders.length && !files.length) { const li = document.createElement('li'); li.className = 'empty'; li.textContent = 'This folder is empty'; ul.appendChild(li); }
+    }
+
+    function note(text) { const d = document.createElement('div'); d.className = 'note'; d.textContent = text; return d; }
+
+    async function openFile(file) {
+      $('list').classList.add('hidden'); $('viewer').classList.remove('hidden');
+      $('back').classList.toggle('hidden', !listMode);
+      $('fileName').textContent = nameOf(file);
+      const dl = safeUrl(file.download_url); $('download').href = dl || '#';
+      const box = $('preview'); box.replaceChildren();
+      const url = safeUrl(file.url);
+      if (!url) { box.appendChild(note('This file is unavailable')); return; }
+      if (isImage(file)) { const img = document.createElement('img'); img.src = url; img.alt = nameOf(file); box.appendChild(img); return; }
+      const kind = kindOf(nameOf(file));
+      if (!kind) { box.appendChild(note('This file type cannot be previewed. Download it to open it.')); return; }
+      box.appendChild(note('Loading preview…'));
+      try {
+        const bytes = await fetchBytes(url);
+        box.replaceChildren();
+        if (kind === 'text') {
+          const pre = document.createElement('pre'); pre.textContent = new TextDecoder().decode(bytes); box.appendChild(pre);
+        } else if (kind === 'pdf') {
+          await loadScript(PDFJS);
+          pdfjsLib.GlobalWorkerOptions.workerSrc = PDFJS_WORKER;
+          const doc = await pdfjsLib.getDocument({ data: bytes }).promise;
+          for (let i = 1; i <= doc.numPages; i++) {
+            const page = await doc.getPage(i);
+            const scale = Math.min(2, (box.clientWidth || 700) * (window.devicePixelRatio || 1) / page.getViewport({ scale: 1 }).width);
+            const viewport = page.getViewport({ scale });
+            const canvas = document.createElement('canvas'); canvas.width = viewport.width; canvas.height = viewport.height;
+            box.appendChild(canvas);
+            await page.render({ canvasContext: canvas.getContext('2d'), viewport }).promise;
+          }
+        } else if (kind === 'table') {
+          await loadScript(SHEETJS);
+          const wb = XLSX.read(bytes, { type: 'array' });
+          const rows = XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]], { header: 1, defval: '' }).slice(0, 1000);
+          const table = document.createElement('table');
+          for (const r of rows) { const tr = table.insertRow(); for (const c of r) tr.insertCell().textContent = String(c); }
+          box.appendChild(rows.length ? table : note('This sheet is empty'));
+        } else if (kind === 'docx') {
+          await loadScript(MAMMOTH);
+          const result = await mammoth.convertToHtml({ arrayBuffer: bytes.buffer });
+          // Rendered from the document's own text; scripts and handlers are stripped.
+          const tpl = document.createElement('template'); tpl.innerHTML = result.value;
+          tpl.content.querySelectorAll('script,iframe,object,embed,style,link').forEach(n => n.remove());
+          tpl.content.querySelectorAll('*').forEach(n => { for (const a of [...n.attributes]) if (/^on/i.test(a.name) || /^\s*javascript:/i.test(a.value)) n.removeAttribute(a.name); });
+          const doc = document.createElement('div'); doc.className = 'doc'; doc.appendChild(tpl.content); box.appendChild(doc);
+        }
+      } catch (_) {
+        box.replaceChildren(note('The preview could not be loaded. Download the file to open it.'));
+      }
+    }
+
+    let listMode = true;
+    $('back').onclick = () => renderList();
+
+    if (!/^[A-Za-z0-9_-]+$/.test(token)) { status.textContent = 'Invalid file link'; }
+    else {
+      fetch(api + encodeURIComponent(token))
+        .then(r => { if (!r.ok) throw new Error(); return r.json(); })
+        .then(data => {
+          share = data;
+          const owner = data.owner || {};
+          const ownerBox = $('owner');
+          const avatar = safeUrl(owner.avatar_url || '');
+          if (avatar) { const img = document.createElement('img'); img.src = avatar; img.alt = ''; ownerBox.appendChild(img); }
+          ownerBox.append('Shared by ' + (owner.nickname || 'a SheSay user'));
+          card.classList.remove('hidden'); status.classList.add('hidden');
+          const single = !(data.root_folder_ids || []).length && (data.files || []).length === 1;
+          listMode = !single;
+          if (single) openFile(data.files[0]); else renderList();
+        })
+        .catch(() => { status.textContent = 'This link does not exist or was removed'; });
+    }
+  </script>
+</body>
+</html>

@@ -20,6 +20,7 @@ You agree not to use the App to:
 You are solely responsible for the content you post, publish, or share through the App. By posting content, you grant us a worldwide, non-exclusive, royalty-free license to host, store, display, and distribute your content solely for the purpose of operating and improving the App. You represent that you own or have the necessary rights to all content you post.
 6. Content Moderation and Removal
 We reserve the right, but are not obligated, to review, moderate, remove, or refuse to display any content that violates these Terms or our policies. We may suspend or terminate accounts that repeatedly violate these Terms. You may report inappropriate content using the in-app reporting feature.
+Cloud Storage: you are solely responsible for the files you upload to or share from your Cloud Storage, including their legality and any rights in them. We may delete any uploaded file, without prior notice, if it violates these Terms or the law, if it is reported and confirmed as a violation, or if we are required to do so. Keep your own copies of important files.
 7. Intellectual Property
 The App and its original content, features, and functionality are owned by us and are protected by applicable intellectual property laws. You may not copy, modify, distribute, or create derivative works from any part of the App without our prior written consent.
 8. Disclaimers
