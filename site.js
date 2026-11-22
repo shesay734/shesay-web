@@ -57,6 +57,7 @@ window.SheSay = (() => {
     captcha_required: 'Complete the human verification first.',
     hourly_limit: 'Too many code requests. Please try again in an hour.',
     daily_limit: "You've reached today's code limit. Please try again tomorrow.",
+    ten_day_limit: "You've reached the code limit for these 10 days. Please try again later.",
     blocked: 'Code requests from this device are paused for 30 days because of unusual activity.',
   };
   async function sendCode({ email, purpose, captchaToken }) {
