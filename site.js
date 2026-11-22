@@ -3,10 +3,7 @@ window.SheSay = (() => {
   const key = 'sb_publishable_JsggCmnvB1Q50l5z2W11Uw_AfKLxCx7';
   // Pages without the Supabase library (the legal pages) still need the
   // language picker below, so a missing library must not stop this file.
-  const client = window.supabase ? window.supabase.createClient(url, key, {
-    // Saved sign-ins are named after the old address; keep that name.
-    auth: { storageKey: 'sb-suxprwbmoakcbopjuosa-auth-token' },
-  }) : null;
+  const client = window.supabase ? window.supabase.createClient(url, key) : null;
   const fusionUrl = `${url}/functions/v1/fusion-auth`;
 
   async function fusion(action, payload = {}, accessToken = null) {
