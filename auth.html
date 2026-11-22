@@ -243,7 +243,7 @@
     async function recordConsent() {
       try {
         // Make sure the server holds the versions the website shows now.
-        await fetch(`${'https://suxprwbmoakcbopjuosa.supabase.co'}/functions/v1/legal-sync`, { method: 'POST' }).catch(() => {});
+        await fetch(`${'https://api.shesayllc.com'}/functions/v1/legal-sync`, { method: 'POST' }).catch(() => {});
         const index = await SheSayLegal.index();
         const documents = {};
         for (const key of loginDocuments) documents[key] = index.documents[key].current;
